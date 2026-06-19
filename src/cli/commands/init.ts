@@ -1,4 +1,4 @@
-import { mkdirSync, writeFileSync, existsSync } from 'fs';
+import { mkdirSync, writeFileSync, existsSync, readFileSync } from 'fs';
 import { join } from 'path';
 
 const FEATURE_SLUG = 'main';
@@ -106,6 +106,19 @@ export function ptInit(): void {
       console.log(`  ✅ ${filePath}`);
     } else {
       console.log(`  ⏭️  ${filePath} (已存在)`);
+    }
+  }
+
+  // Create .gitignore to exclude session tracking file
+  const gitignorePath = join(cwd, '.gitignore');
+  if (!existsSync(gitignorePath)) {
+    writeFileSync(gitignorePath, '.pt-session\n');
+    console.log('  ✅ .gitignore');
+  } else {
+    const existing = readFileSync(gitignorePath, 'utf-8');
+    if (!existing.includes('.pt-session')) {
+      writeFileSync(gitignorePath, existing.trimEnd() + '\n.pt-session\n');
+      console.log('  ✅ .gitignore (已追加 .pt-session)');
     }
   }
 
