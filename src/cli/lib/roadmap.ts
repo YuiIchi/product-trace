@@ -22,7 +22,20 @@ export interface Roadmap {
 }
 
 export function parseRoadmap(content: string): Roadmap {
-  const { data, content: body } = matter(content);
+  let data: Record<string, any>;
+  let body: string;
+  try {
+    const parsed = matter(content);
+    data = parsed.data;
+    body = parsed.content;
+  } catch (e: any) {
+    throw new Error(
+      `ROADMAP.md frontmatter 解析失败: ${e.message}\n` +
+      `请检查 frontmatter 字段值是否含有特殊字符（如冒号、引号等）。\n` +
+      `常见原因: last-updated 等字段中写了带冒号的注释。`
+    );
+  }
+
   const lines = body.split('\n');
   const fmCurrentSprint = data['current-sprint'] || null;
 
@@ -38,12 +51,11 @@ export function parseRoadmap(content: string): Roadmap {
       if (currentSprint) sprints.push(currentSprint);
       const rawGoal = sprintMatch[2].trim();
       const isCompleted = rawGoal.includes('✅');
-      const isCurrent = rawGoal.includes('← current');
       currentSprint = {
         name: `Sprint ${sprintMatch[1]}`,
         goal: rawGoal.replace(' ✅', '').replace(' ← current', '').trim(),
         completed: isCompleted,
-        isCurrent,
+        isCurrent: false, // 由 frontmatter current-sprint 统一设置
         stories: [],
       };
       currentSection = 'sprint';
@@ -94,10 +106,10 @@ export function parseRoadmap(content: string): Roadmap {
 
   if (currentSprint) sprints.push(currentSprint);
 
-  // Fallback: set isCurrent from frontmatter current-sprint if no ← current marker
-  if (fmCurrentSprint && !sprints.some(s => s.isCurrent)) {
-    const fallback = sprints.find(s => s.name === fmCurrentSprint);
-    if (fallback) fallback.isCurrent = true;
+  // 唯一真相源：frontmatter current-sprint 决定哪个 Sprint 是当前
+  if (fmCurrentSprint) {
+    const target = sprints.find(s => s.name === fmCurrentSprint);
+    if (target) target.isCurrent = true;
   }
 
   return {

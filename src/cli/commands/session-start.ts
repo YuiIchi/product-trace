@@ -25,7 +25,15 @@ export async function sessionStart(): Promise<void> {
     return;
   }
 
-  const roadmap = parseRoadmap(readFileSync(roadmapPath, 'utf-8'));
+  let roadmap;
+  try {
+    roadmap = parseRoadmap(readFileSync(roadmapPath, 'utf-8'));
+  } catch (e: any) {
+    console.log(`📋 Product Trace`);
+    console.log();
+    console.log(`❌ ${e.message}`);
+    return;
+  }
   const current = getCurrentSprint(roadmap);
 
   // Feature name from path

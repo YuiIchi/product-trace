@@ -11,7 +11,13 @@ export function ptProgress(): void {
     return;
   }
 
-  const roadmap = parseRoadmap(readFileSync(roadmapPath, 'utf-8'));
+  let roadmap;
+  try {
+    roadmap = parseRoadmap(readFileSync(roadmapPath, 'utf-8'));
+  } catch (e: any) {
+    console.log(`❌ ${e.message}`);
+    return;
+  }
 
   console.log('=== Product Trace 进度 ===');
   console.log();

@@ -32,7 +32,13 @@ export function ptStatus(): void {
     return;
   }
 
-  const roadmap = parseRoadmap(readFileSync(roadmapPath, 'utf-8'));
+  let roadmap;
+  try {
+    roadmap = parseRoadmap(readFileSync(roadmapPath, 'utf-8'));
+  } catch (e: any) {
+    console.log(`❌ ${e.message}`);
+    return;
+  }
   const current = getCurrentSprint(roadmap);
 
   console.log('=== Product Trace Status ===');
