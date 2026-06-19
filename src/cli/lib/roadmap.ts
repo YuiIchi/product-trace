@@ -24,6 +24,7 @@ export interface Roadmap {
 export function parseRoadmap(content: string): Roadmap {
   const { data, content: body } = matter(content);
   const lines = body.split('\n');
+  const fmCurrentSprint = data['current-sprint'] || null;
 
   const sprints: Sprint[] = [];
   const backlogs: Story[] = [];
@@ -93,8 +94,14 @@ export function parseRoadmap(content: string): Roadmap {
 
   if (currentSprint) sprints.push(currentSprint);
 
+  // Fallback: set isCurrent from frontmatter current-sprint if no ← current marker
+  if (fmCurrentSprint && !sprints.some(s => s.isCurrent)) {
+    const fallback = sprints.find(s => s.name === fmCurrentSprint);
+    if (fallback) fallback.isCurrent = true;
+  }
+
   return {
-    currentSprint: data['current-sprint'] || null,
+    currentSprint: fmCurrentSprint,
     sprints,
     backlogs,
   };
