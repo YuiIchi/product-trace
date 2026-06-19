@@ -1,0 +1,11 @@
+{
+  "name": "product-trace",
+  "displayName": "Product Trace",
+  "version": "1.0.0",
+  "description": "产品研发追踪工作流 — 进入会话即知项目在哪、做到哪、该做什么",
+  "author": { "name": "Product Trace" },
+  "license": "MIT",
+  "keywords": ["product", "trace", "roadmap", "sprint", "development"],
+  "skills": "./skills/",
+  "hooks": "./hooks/hooks.json"
+}
