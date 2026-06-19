@@ -1,0 +1,31 @@
+{
+  "name": "product-trace",
+  "version": "1.0.0",
+  "description": "Product Trace — 通用产品研发追踪工作流",
+  "bin": {
+    "pt": "./dist/cli/index.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "keywords": [
+    "product",
+    "trace",
+    "roadmap",
+    "sprint"
+  ],
+  "author": "Product Trace",
+  "license": "MIT",
+  "dependencies": {
+    "commander": "^15.0.0",
+    "gray-matter": "^4.0.3",
+    "simple-git": "^3.36.0"
+  },
+  "devDependencies": {
+    "@types/node": "^25.9.3",
+    "typescript": "^6.0.3",
+    "vitest": "^4.1.9"
+  }
+}
