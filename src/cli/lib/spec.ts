@@ -18,7 +18,7 @@ export function parseSpec(content: string): SpecData {
   return {
     doc: data.doc || 'spec',
     sprint: data.sprint || 0,
-    version: data.version || '1.0',
+    version: String(data.version || '1.0'),
     status: data.status || 'draft',
     lastVerifiedAgainst: {
       upstream: data['last-verified-against']?.upstream || '',
