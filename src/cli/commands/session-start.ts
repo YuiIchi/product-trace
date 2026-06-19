@@ -1,66 +1,20 @@
 import { readFileSync, existsSync } from 'fs';
-import { join } from 'path';
 import { parseRoadmap, getCurrentSprint, getStoryStatus } from '../lib/roadmap';
 import { parseSpec } from '../lib/spec';
 import { getHeadCommit, countCommitsSince } from '../lib/git';
-
-function findRoadmap(cwd: string): string | null {
-  // 1. 直接 docs/ROADMAP.md（简单项目）
-  const simple = join(cwd, 'docs/ROADMAP.md');
-  if (existsSync(simple)) return simple;
-
-  // 2. docs/features/*/ROADMAP.md（多 feature 项目）
-  const featuresDir = join(cwd, 'docs/features');
-  if (existsSync(featuresDir)) {
-    // 尝试找到有 ← current 标记的 ROADMAP
-    // 简化：返回第一个找到的
-  }
-
-  return null;
-}
-
-function findSpecForSprint(cwd: string, sprintName: string): string | null {
-  // docs/features/*/sprints/<sprint-name>/spec.md
-  const sprintNum = sprintName.replace('Sprint ', '').toLowerCase();
-  const patterns = [
-    join(cwd, 'docs/features', '*', 'sprints', `sprint-${sprintNum}`, 'spec.md'),
-    join(cwd, 'docs/features', '*', 'sprints', sprintNum, 'spec.md'),
-  ];
-
-  for (const pattern of patterns) {
-    // 简化：glob 搜索
-    const tryDir = (base: string) => {
-      const dirs = ['sprint-1', 'sprint-2', 'sprint-3', '1', '2', '3'];
-      for (const d of dirs) {
-        const path = join(base, d, 'spec.md');
-        if (existsSync(path)) return path;
-      }
-      return null;
-    };
-
-    const featuresDir = join(cwd, 'docs/features');
-    if (existsSync(featuresDir)) {
-      // 遍历 features 目录
-      try {
-        const entries = require('fs').readdirSync(featuresDir);
-        for (const entry of entries) {
-          const path = join(featuresDir, entry, 'sprints');
-          if (existsSync(path)) {
-            const result = tryDir(path);
-            if (result) return result;
-          }
-        }
-      } catch {}
-    }
-  }
-
-  return null;
-}
+import { findRoadmap, findSpecFile, findCorrectionsFile } from '../lib/project';
+import { saveSessionStart } from '../lib/session';
 
 export async function sessionStart(): Promise<void> {
   const cwd = process.cwd();
 
-  // Step 1: Find ROADMAP.md
+  // Step 0: Save session start commit for session-stop comparison
+  const headCommit = await getHeadCommit();
+  if (headCommit) {
+    saveSessionStart(cwd, headCommit);
+  }
+
+  // Step 1: Find and read ROADMAP.md
   const roadmapPath = findRoadmap(cwd);
 
   if (!roadmapPath) {
@@ -76,14 +30,14 @@ export async function sessionStart(): Promise<void> {
 
   // Feature name from path
   const featureMatch = roadmapPath.match(/features\/([^/]+)/);
-  const featureName = featureMatch ? featureMatch[1] : pathToFeature(cwd);
+  const featureName = featureMatch ? featureMatch[1] : extractName(cwd);
 
   console.log(`📋 Product Trace: feature/${featureName}`);
   console.log();
 
   if (!current) {
     console.log('当前: 无活跃 Sprint');
-    console.log('运行 pt new-sprint 创建新 Sprint，或在 ROADMAP.md 标记 ← current');
+    console.log('在 ROADMAP.md 中标记 ← current 来激活 Sprint');
     return;
   }
 
@@ -115,10 +69,10 @@ export async function sessionStart(): Promise<void> {
   console.log();
 
   // Step 2: Read spec.md and check drift
-  const specPath = findSpecForSprint(cwd, current.name);
+  const featureDir = roadmapPath.replace('/ROADMAP.md', '');
+  const specPath = findSpecFile(featureDir, current.name);
   if (specPath && existsSync(specPath)) {
     const spec = parseSpec(readFileSync(specPath, 'utf-8'));
-    const headCommit = await getHeadCommit();
     const downstream = spec.lastVerifiedAgainst.downstream;
 
     if (downstream && downstream !== 'none') {
@@ -129,7 +83,7 @@ export async function sessionStart(): Promise<void> {
     }
 
     if (spec.openCorrections > 0) {
-      console.log(`⚠️ ${spec.openCorrections} 条未处理 CORR`);
+      console.log(`⚠️ ${spec.openCorrections} 条未处理 CORR (open-corrections: ${spec.openCorrections})`);
     }
 
     if (spec.status === 'drifted') {
@@ -137,43 +91,21 @@ export async function sessionStart(): Promise<void> {
     }
   }
 
-  // Step 3: Check SIGNAL placeholders in corrections file
+  // Step 3: Check SIGNAL placeholders
   const correctionsPath = findCorrectionsFile(cwd);
   if (correctionsPath && existsSync(correctionsPath)) {
     const content = readFileSync(correctionsPath, 'utf-8');
-    const signals = (content.match(/SIGNAL/g) || []);
+    const signals = (content.match(/^- .*SIGNAL/gm) || []);
     if (signals.length > 0) {
       console.log(`⚠️ ${signals.length} 条 SIGNAL 占位待升级为 CORR`);
     }
   }
 
-  if (blockedStories.length > 0 || (specPath && existsSync(specPath))) {
-    console.log();
-    console.log('建议: 先对账 spec.md 并处理阻塞项，再继续开发');
-  }
+  console.log();
+  console.log('建议: 先对账再继续开发');
 }
 
-function pathToFeature(cwd: string): string {
-  // Try to extract from directory name
+function extractName(cwd: string): string {
   const parts = cwd.split('/');
   return parts[parts.length - 1] || 'main';
-}
-
-function findCorrectionsFile(cwd: string): string | null {
-  const featuresDir = join(cwd, 'docs/features');
-  if (!existsSync(featuresDir)) return null;
-  try {
-    const entries = require('fs').readdirSync(featuresDir);
-    for (const entry of entries) {
-      const sprintsDir = join(featuresDir, entry, 'sprints');
-      if (existsSync(sprintsDir)) {
-        const sprintDirs = require('fs').readdirSync(sprintsDir);
-        for (const sd of sprintDirs) {
-          const path = join(sprintsDir, sd, `corrections-${sd}.md`);
-          if (existsSync(path)) return path;
-        }
-      }
-    }
-  } catch {}
-  return null;
 }

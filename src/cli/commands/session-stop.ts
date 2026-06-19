@@ -1,15 +1,49 @@
-import { getDiffStat } from '../lib/git';
+import { getDiffStat, countCommitsSince } from '../lib/git';
+import { getSessionStart, clearSession } from '../lib/session';
 
 export async function sessionStop(): Promise<void> {
-  const diff = await getDiffStat();
+  const cwd = process.cwd();
+
+  // Compare against session start commit to find all changes
+  const sessionStartCommit = getSessionStart(cwd);
+  let commitsSinceStart = 0;
+  let diffFiles: string[] = [];
+  let diffSummary = '';
+
+  if (sessionStartCommit) {
+    commitsSinceStart = await countCommitsSince(sessionStartCommit);
+    // Get diff between session start and current HEAD
+    const { execSync } = require('child_process');
+    try {
+      const diffOutput = execSync(
+        `git diff --stat ${sessionStartCommit}..HEAD`,
+        { cwd, encoding: 'utf-8' }
+      );
+      const lines = diffOutput.trim().split('\n');
+      if (lines.length > 0) {
+        diffSummary = lines[lines.length - 1]; // last line has summary
+        diffFiles = lines.slice(0, -1).map((l: string) => l.split('|')[0].trim());
+      }
+    } catch {}
+  }
+
+  // Fallback: check unstaged changes
+  if (diffFiles.length === 0) {
+    const diff = await getDiffStat();
+    diffFiles = diff.files;
+    diffSummary = diff.summary;
+  }
+
+  // Clean up session file
+  clearSession(cwd);
 
   console.log('--- Product Trace: 会话对账 ---');
   console.log();
 
-  if (diff.files.length > 0) {
+  if (diffFiles.length > 0) {
     console.log('本次修改:');
-    diff.files.forEach(f => console.log(`  ${f}`));
-    console.log(`  ${diff.summary}`);
+    diffFiles.forEach(f => console.log(`  ${f}`));
+    if (diffSummary) console.log(`  ${diffSummary}`);
   } else {
     console.log('本次修改: 无文件变更');
   }
