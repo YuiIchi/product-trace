@@ -4,6 +4,9 @@ import { sessionStart } from './commands/session-start';
 import { sessionStop } from './commands/session-stop';
 import { ptInit } from './commands/init';
 import { ptStatus } from './commands/status';
+import { ptNewSprint } from './commands/new-sprint';
+import { ptProgress } from './commands/progress';
+import { ptTemplate } from './commands/template';
 
 const program = new Command();
 
@@ -46,9 +49,9 @@ program
 
 program
   .command('new-sprint')
-  .description('创建 sprint-N/ 目录 + spec.md')
+  .description('创建 sprint-N/ 目录 + spec.md + corrections')
   .action(() => {
-    console.log('TODO: new-sprint');
+    ptNewSprint();
     process.exit(0);
   });
 
@@ -56,7 +59,7 @@ program
   .command('progress')
   .description('从 ROADMAP checkbox 统计完成度')
   .action(() => {
-    console.log('TODO: progress');
+    ptProgress();
     process.exit(0);
   });
 
@@ -64,7 +67,7 @@ program
   .command('template <name>')
   .description('输出指定模板内容')
   .action((name: string) => {
-    console.log(`TODO: template ${name}`);
+    ptTemplate(name);
     process.exit(0);
   });
 
