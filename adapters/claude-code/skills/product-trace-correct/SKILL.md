@@ -1,40 +1,63 @@
 ---
 name: product-trace-correct
-description: 开发中纠偏。当 Build 过程中发现 spec/ROADMAP/vision 与实际情况不一致、用户说"等等不对"、"应该是.."时 MUST 使用此 SKILL。按 L0-L3 四级分级：L0=技术细节(30s)/L1=验收标准(完成Task后)/L2=功能范围(停手)/L3=产品方向(回Discover)。每次留 CORR 记录。关键词：纠偏、CORR、SIGNAL、L0、L1、L2、L3、设计变更。
+description: 开发中纠偏。当 Build 过程中发现 spec/ROADMAP/vision 与实际情况不一致、用户说"等等这个不对"、"应该是..."时 MUST 使用此 SKILL。按 L0-L3 四级分级处理，每次留 CORR 记录，按等级上行更新受影响的文档。关键词：纠偏、CORR、SIGNAL、L0、L1、L2、L3、设计变更。
 ---
 
 # Correct — 开发中纠偏
 
-Product Trace 旁路：实现中发现设计偏差时，不分级处理、留痕更新。每次产生一条 CORR 记录。
+## 你的位置
 
-## 前置条件
+Product Trace 假设文档会漂移——写代码的过程中必然会发现"哦不对，spec 里这个设计有问题"。Correct 就是为这个场景准备的。你不是来重新做设计的，你是来**判断偏差有多大、该改哪些文档、记一条记录让以后的人知道为什么改了**。
 
-- 在 Build 过程中，开发者发现实现和 spec/ROADMAP/vision 不一致
-- 触发：用户说"等等这个不对"、"应该是..."
-- 或 pt session-start/stop 检测到漂移
+每次纠正产生一条 CORR 记录，存在 `corrections-sprint-N.md` 里。记录链不断，文档就不会腐烂。
 
-## 四级
+## 什么时候该用我
 
-| 等级 | 触发 | 上行到 | 闸门 |
+- 写代码的过程中发现 spec 或 ROADMAP 或 vision 和实际不一致
+- 用户说"等等这个不对"、"应该是..."、"设计有问题"
+- `pt session-start` 或 `pt session-stop` 检测到了漂移
+- 这不是日常的"代码重构"——这是设计层面的偏差
+
+## 四级纠偏
+
+发现偏差后先判断等级。问用户三个问题：影响验收标准吗？影响其他 Story 吗？改变产品方向吗？
+
+| 全否 → L0 | 影响AC → L1 | 影响Story → L2 | 影响方向 → L3 |
 |:--|:--|:--|:--|
-| L0 | 字段类型/命名/文件拆分/库选择 | spec §5 | 🟢 不中断 |
-| L1 | AC遗漏/状态缺漏/交互缺步 | spec §1+§2+代码+测试 | 🟡 完成当前Task |
-| L2 | Story拆合移/Sprint Goal不可达 | ROADMAP+spec §4 | 🔴 停手 |
-| L3 | 方向错/目标用户错/MVP错 | vision全链路 | ⚫ 回Discover |
+
+**L0 — 技术细节**：字段类型改一下、文件拆两个、换个库。这些不影响验收标准，不影响其他 Story。处理：改 spec §5 技术方案段落 + 记一条 CORR。**30 秒完成，不中断开发**。
+
+**L1 — 验收标准**：loading 缺了 retry 态、空态没考虑了、交互漏了一步。这些影响验收标准，但 Story 范围不变。处理：**完成当前 Task 到可编译状态**，然后更新 spec 的用户旅程和 AC + 重构受影响的代码和测试 + 记一条 CORR + spec 版本号 +1。
+
+**L2 — 功能范围**：Story 太大了要拆、这个依赖没准备好做不了、Sprint Goal 做不到。这些影响 ROADMAP 的 Story 划分。处理：**立即停手**，重排 ROADMAP 的 Story 结构 + 重写 spec 的用户故事部分 + 评估已写代码有没有变孤儿代码 + ROADMAP 版本号 +1 + 记一条 CORR。
+
+**L3 — 产品方向**：用户不是这群人、问题定义错了、MVP 范围不对。这些影响根本方向。处理：**停止一切开发**，把旧的 vision 归档（文件名加 `-archived`），重新走一遍 Discover 和 Plan。
 
 ## 执行
 
-1. **CLASSIFY**：问"影响AC？影响其他Story？改变方向？"→全否L0/影响AC→L1/影响Story→L2/影响方向→L3。必须用户确认。
-2. **GATE**：按闸门执行。
-3. **SCOPE**：列出影响文档和代码，用户确认。
-4. **PROPAGATE**：上游→下游顺序更新。L0:spec§5→CORR / L1:spec§1+§2→代码→测试→version bump→CORR / L2:ROADMAP→spec§4→ROADMAP version bump→CORR / L3:归档vision→re-Discover→re-Plan。
-5. **LOG**：追加 CORR 到 `corrections-sprint-N.md`：
-   ```
-   ## CORR-SN-XXX
-   - 日期/等级/发现于/触发/影响/状态: applied|deferred|reverted
-   ```
-6. **RE-VALIDATE**：列出需重验的 AC。
+不管哪个等级，都走这六步：
 
-## 完成后
+**1. 分类**：按上面三个问题判断等级。必须用户确认，不要自己决定。
 
-CORR 记录 + 文档更新 → 回到 `/product-trace-build` 继续（L3 除外，回 Discover）
+**2. 闸门**：L0 继续、L1 完成当前 Task 后、L2 立即停手、L3 退出 Build。
+
+**3. 范围**：列出这次要改哪些文档和文件，用户确认。
+
+**4. 更新**：从上游到下游顺序改——先改文档，再改代码。文档改完 bump version。
+
+**5. 记录**：在 `corrections-sprint-N.md` 的 `## CORR 条目` 段追加一条：
+```
+## CORR-SN-XXX
+- 日期: YYYY-MM-DD
+- 等级: L0|L1|L2|L3
+- 发现于: Task X
+- 触发: 一句话描述
+- 影响: 改了什么文档和代码
+- 状态: applied
+```
+
+**6. 重验**：列出哪些 AC 需要重新验收。如果已有验收报告，标记被影响的 AC 行。
+
+## 做完之后
+
+回到 `/product-trace-build` 继续开发（L3 除外——L3 之后要从头重新 Discover）。

@@ -1,39 +1,60 @@
 ---
 name: product-trace-build
-description: Sprint 开发。当 sprint-N/spec.md status: stable 就绪时 MUST 使用此 SKILL。按 spec Task 拆解逐项：写测试→确认失败→最小实现→确认通过→重构。每 Story 完成自检漂移+审查。更新 ROADMAP checkbox。关键词：实现、开发、TDD、测试、checkbox。
+description: Sprint 开发。当 sprint-N/spec.md status: stable 就绪时 MUST 使用此 SKILL。按 spec Task 拆解逐项实现代码——先写失败的测试，再写最小实现把测试变绿，然后重构清理。每完成一个 Story 自检 spec 还准吗、派独立 subagent 做 spec 合规和代码质量两轮审查。更新 ROADMAP checkbox。关键词：实现、开发、TDD、测试、checkbox。
 ---
 
 # Build — Sprint 开发
 
-Product Trace 第四环：按 spec.md 实现代码。红→绿→重构，每 Story 完成后自检。
+## 你的位置
 
-## 前置条件
+前面 Design 产出了执行手册（spec.md），里面写好了用户旅程、验收标准、Task 拆解。现在你是第四环——**按这份手册把代码写出来，每做完一个功能增量就自检一次"手册还准吗"，不准就记录下来而不是偷偷改掉**。
 
-- sprint-N/spec.md 就绪（status: stable）
-- ROADMAP 当前 Sprint ← current
+代码写完不是终点——每个 Story 完成后要更新 ROADMAP 里的 checkbox（`[ ]` → `[x]`），让路线图的进度永远和现实同步。整个 Sprint 开发完成后退出的那一刻，要对账——改了什么、进度如何、有没有偏差没处理。
 
-## 工具
+## 什么时候该用我
 
-`pt session-start`（上下文）、`pt status`（进度）、`pt progress`（统计）、`pt session-stop`（收尾）。Bash 跑项目测试/构建命令。
+- sprint-N/spec.md 已经写好（status: stable）
+- ROADMAP 当前 Sprint 标注了 `← current`
+- 如果 spec 还是 draft——先回 `/product-trace-design` 设计完
+- 如果 Sprint 所有 Story 都 `[x]` 了——你该去 `/product-trace-verify` 验收了
 
-## 关键概念
+## 核心概念
 
-- CHECKBOX：ROADMAP 中 Story 状态 `[ ]→[~]→[x]`。完成 Story 后更新
-- SIGNAL：实现中 spec 不准时的临时标记，在 `corrections-sprint-N.md` 的 `## SIGNAL 占位`
-- CORR：确认的偏差记录。偏离 spec 时触发 `/product-trace-correct`
+红→绿→重构——写每一个函数的三步曲：
 
-## 执行
+1. **红**：先写一个会失败的测试。不写测试就不知道实现对不对
+2. **绿**：写最少代码让测试通过。不要多写——测试没要求的就不做
+3. **重构**：测试绿了之后，清理代码结构、命名、消除重复——保持测试绿
 
-**每 Task**：1. 写失败测试 → 2. 确认失败 → 3. 最小实现 → 4. 确认通过 → 5. 重构 → 6. Task [x]，git commit。
+**自检**：每完成一个 Story，对照 spec 问自己"用户旅程还准吗？AC 还覆盖吗？"
+**SIGNAL**：实现中发现 spec 描述不够准确时的临时标记，记在 corrections 文件里，不中断开发流程。会话结束时决定是否升级
+**审查**：每个 Story 完成派两个独立的 subagent——一个检查"代码是不是按 spec 写的"（多做？少做？），一个检查"代码质量"（命名、结构、边界）
 
-**每 Story 完成后**：自检"spec 还准吗？"→ 准则更新 ROADMAP checkbox `[x]`。不准则触发 `/product-trace-correct`。
+## 你能用的工具
 
-**审查**（每个 Story 后）：派两个独立 subagent——(1) spec 合规：spec+diff，多做/少做？(2) 代码质量：diff，命名/结构/边界。
+| 命令 | 干什么 |
+|:--|:--|
+| `pt session-start` | 进入会话时看上下文 |
+| `pt status` | 看 Story 进度 |
+| `pt progress` | 看进度条和完成率 |
+| `pt session-stop` | 退出会话时对账——改了什么？spec 还准吗？有没处理的偏差吗？ |
 
-**偏差发现**：小修标记 SIGNAL；大修触发 `/product-trace-correct`。
+Bash 用来跑项目的测试和构建命令。
 
-**全部 Story 完成后**：运行 `pt session-stop`——回答进度/纠偏/SIGNAL 三问。
+## 一步步做
 
-## 完成后
+**1. 进上下文**：`pt session-start`，确认当前 Sprint 和进行中的 Story。
 
-所有 Story [x] + pt session-stop 对账 → `/product-trace-verify`（必须新会话）
+**2. 按 Task 逐个做**：读 spec.md 找到当前 Story 第一个未完成的 Task。对每个 Task：红→绿→重构→Task [x]→git commit。
+
+**3. 每 Story 完成后自检**：spec 还准吗？准→更新 ROADMAP checkbox `[x]`。不准→触发 `/product-trace-correct`。
+
+**4. 每 Story 完成后审查**：派独立 subagent 做 spec 合规检查（spec+diff，多做/少做？）和代码质量检查（diff，命名/边界）。发现的问题修了再查。
+
+**5. 发现偏差时**：小改动记 SIGNAL 占位；涉及验收标准或范围的大改动立即触发 `/product-trace-correct`。
+
+**6. 全部 Story 完成后**：`pt session-stop`——回答三个必答题：进度更新、spec 还准吗（A=准/B=L0/C=L1/D=L2/E=L3）、SIGNAL 升级吗。
+
+## 做完之后
+
+所有 Story [x] + pt session-stop 对账完成 → 告诉用户："开发完成。下一步在新会话中用 `/product-trace-verify` 做独立验收。"
