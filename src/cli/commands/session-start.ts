@@ -85,7 +85,11 @@ export async function sessionStart(): Promise<void> {
 
     if (downstream && downstream !== 'none') {
       const commitsSince = await countCommitsSince(downstream);
-      if (commitsSince > 0) {
+      if (commitsSince === -1) {
+        console.log(`⚠️ spec.md downstream commit (${downstream.slice(0, 7)}) 在当前仓库不可解析`);
+        console.log('   可能的原因: commit 在别的分支、已被 force push 覆盖、或仓库被重置');
+        console.log('   建议: 手动检查 spec 与代码是否一致，确认后刷新 last-verified-against.downstream');
+      } else if (commitsSince > 0) {
         console.log(`⚠️ spec.md: ${commitsSince} commits since last verification`);
       }
     }

@@ -77,29 +77,36 @@ export function findCorrectionsFile(cwd: string): string | null {
 }
 
 /**
- * Find and read a template file. Searches in order:
+ * Find and read a template file. Tries .html first, then .md.
+ * Searches in order:
  * 1. adapters/claude-code/templates/ (development)
  * 2. ~/.claude/templates/product-trace/ (global install)
  * 3. .claude/templates/product-trace/ (local install)
  */
 export function getTemplateContent(name: string): string | null {
-  // Search upwards from cwd until we find adapters/claude-code/templates/
+  const extensions = name === 'prototype' ? ['.html', '.md'] : ['.md', '.html'];
+
+  // Search upwards from cwd
   let dir = process.cwd();
   for (let i = 0; i < 10; i++) {
-    const path = join(dir, 'adapters', 'claude-code', 'templates', `${name}.md`);
-    if (existsSync(path)) return readFileSync(path, 'utf-8');
+    for (const ext of extensions) {
+      const path = join(dir, 'adapters', 'claude-code', 'templates', `${name}${ext}`);
+      if (existsSync(path)) return readFileSync(path, 'utf-8');
+    }
     const parent = dirname(dir);
     if (parent === dir) break;
     dir = parent;
   }
 
   // Also check global and local install locations
-  const installed = [
-    join(process.env.HOME || '/', '.claude', 'templates', 'product-trace', `${name}.md`),
-    join(process.cwd(), '.claude', 'templates', 'product-trace', `${name}.md`),
-  ];
-  for (const path of installed) {
-    if (existsSync(path)) return readFileSync(path, 'utf-8');
+  for (const base of [
+    join(process.env.HOME || '/', '.claude', 'templates', 'product-trace'),
+    join(process.cwd(), '.claude', 'templates', 'product-trace'),
+  ]) {
+    for (const ext of extensions) {
+      const path = join(base, `${name}${ext}`);
+      if (existsSync(path)) return readFileSync(path, 'utf-8');
+    }
   }
 
   return null;

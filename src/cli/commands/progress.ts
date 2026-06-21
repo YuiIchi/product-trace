@@ -1,10 +1,10 @@
-import { readFileSync, existsSync, readdirSync } from 'fs';
-import { join } from 'path';
+import { readFileSync } from 'fs';
 import { parseRoadmap, getStoryStatus } from '../lib/roadmap';
+import { findRoadmap } from '../lib/project';
 
 export function ptProgress(): void {
   const cwd = process.cwd();
-  const roadmapPath = findRoadmapFile(cwd);
+  const roadmapPath = findRoadmap(cwd);
 
   if (!roadmapPath) {
     console.log('未找到 roadmap.md');
@@ -31,7 +31,6 @@ export function ptProgress(): void {
     const marker = sprint.completed ? ' ✅' : '';
     const pct = status.total > 0 ? Math.round(status.completed / status.total * 100) : 0;
 
-    // Progress bar: ████████░░ 80%
     const barLen = 10;
     const filled = Math.round(pct / 100 * barLen);
     const bar = '█'.repeat(filled) + '░'.repeat(barLen - filled);
@@ -52,24 +51,4 @@ export function ptProgress(): void {
     console.log();
     console.log(`Backlog: ${roadmap.backlogs.length} 项`);
   }
-}
-
-function findRoadmapFile(cwd: string): string | null {
-  const paths = [
-    join(cwd, 'docs/roadmap.md'),
-    join(cwd, 'docs/features/main/roadmap.md'),
-  ];
-  const found = paths.find(p => existsSync(p));
-  if (found) return found;
-
-  const featuresDir = join(cwd, 'docs/features');
-  if (existsSync(featuresDir)) {
-    try {
-      for (const entry of readdirSync(featuresDir)) {
-        const p = join(featuresDir, entry, 'roadmap.md');
-        if (existsSync(p)) return p;
-      }
-    } catch {}
-  }
-  return null;
 }

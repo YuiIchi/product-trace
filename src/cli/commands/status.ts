@@ -1,30 +1,10 @@
-import { readFileSync, existsSync } from 'fs';
-import { join } from 'path';
+import { readFileSync } from 'fs';
 import { parseRoadmap, getCurrentSprint, getStoryStatus } from '../lib/roadmap';
+import { findRoadmap } from '../lib/project';
 
 export function ptStatus(): void {
   const cwd = process.cwd();
-
-  // Find roadmap.md
-  const roadmapPaths = [
-    join(cwd, 'docs/roadmap.md'),
-    join(cwd, 'docs/features/main/roadmap.md'),
-  ];
-
-  let roadmapPath = roadmapPaths.find(p => existsSync(p));
-  if (!roadmapPath) {
-    // Try to find any feature dir
-    const featuresDir = join(cwd, 'docs/features');
-    if (existsSync(featuresDir)) {
-      try {
-        const entries = require('fs').readdirSync(featuresDir);
-        for (const entry of entries) {
-          const p = join(featuresDir, entry, 'roadmap.md');
-          if (existsSync(p)) { roadmapPath = p; break; }
-        }
-      } catch {}
-    }
-  }
+  const roadmapPath = findRoadmap(cwd);
 
   if (!roadmapPath) {
     console.log('未找到 roadmap.md');
@@ -39,12 +19,10 @@ export function ptStatus(): void {
     console.log(`❌ ${e.message}`);
     return;
   }
-  const current = getCurrentSprint(roadmap);
 
   console.log('=== Product Trace Status ===');
   console.log();
 
-  // Show all sprints
   for (const sprint of roadmap.sprints) {
     const status = getStoryStatus(sprint);
     const marker = sprint.isCurrent ? ' ← current' : '';
