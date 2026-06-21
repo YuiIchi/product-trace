@@ -3,12 +3,20 @@ import { parseRoadmap, getCurrentSprint, getStoryStatus } from '../lib/roadmap';
 import { parseSpec } from '../lib/spec';
 import { getHeadCommit, countCommitsSince } from '../lib/git';
 import { findRoadmap, findSpecFile, findCorrectionsFile } from '../lib/project';
-import { saveSessionStart } from '../lib/session';
+import { saveSessionStart, getSessionStart } from '../lib/session';
 
 export async function sessionStart(): Promise<void> {
   const cwd = process.cwd();
 
-  // Step 0: Save session start commit for session-stop comparison
+  // Step 0: Check for unclean exit from last session
+  const lastSessionCommit = getSessionStart(cwd);
+  if (lastSessionCommit) {
+    console.log('⚠️ 上一次会话可能没有正常退出（pt session-stop 未执行）');
+    console.log('   建议: 先全量对账——检查 spec 还准吗、checkbox 还对吗');
+    console.log();
+  }
+
+  // Save current HEAD as session start commit for session-stop comparison
   const headCommit = await getHeadCommit();
   if (headCommit) {
     saveSessionStart(cwd, headCommit);
