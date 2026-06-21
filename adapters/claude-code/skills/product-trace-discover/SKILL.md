@@ -1,8 +1,6 @@
 ---
 name: product-trace-discover
 description: >-
-  需求发现。当你收到模糊产品想法或功能提议时，MUST 使用此 SKILL。
-  典型触发词："我有个想法"、"帮我分析一下这个需求"、"值不值得做"。
-  你将：逐一提问澄清谁的问题→现在怎么解决→MVP边界→写产品目标书→Go/No-Go建议。
-  产出 product-vision.md。若目标书已确认(status:stable)，不要用我——引导去 /product-trace-plan。
-  关键词：产品想法、需求澄清、MVP、产品分析、Go/No-Go。
+  需求发现阶段。用户有模糊产品想法或功能提议、项目还没有清晰的产品目标书时，MUST 使用此 SKILL。
+  你将通过多轮对话逐步澄清——谁在什么场景下遇到了什么问题、怎么解决的、MVP最小范围是什么，最后将所有分析写入产品目标书并给出 Go/No-Go 建议。
+  关键词：产品想法、需求澄清、MVP、Go/No-Go。
