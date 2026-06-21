@@ -52,7 +52,7 @@ export async function sessionStop(): Promise<void> {
   console.log('请回答（不能跳过）:');
   console.log();
   console.log('1. 进度: 哪些 checkbox 需要更新？');
-  console.log('   → 更新 ROADMAP.md');
+  console.log('   → 更新 roadmap.md');
   console.log();
   console.log('2. 纠偏: spec/ROADMAP/vision 还准吗？');
   console.log('   A. 准 → 刷新 last-verified-against.downstream = HEAD');

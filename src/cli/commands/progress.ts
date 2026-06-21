@@ -7,7 +7,7 @@ export function ptProgress(): void {
   const roadmapPath = findRoadmapFile(cwd);
 
   if (!roadmapPath) {
-    console.log('未找到 ROADMAP.md');
+    console.log('未找到 roadmap.md');
     return;
   }
 
@@ -56,8 +56,8 @@ export function ptProgress(): void {
 
 function findRoadmapFile(cwd: string): string | null {
   const paths = [
-    join(cwd, 'docs/ROADMAP.md'),
-    join(cwd, 'docs/features/main/ROADMAP.md'),
+    join(cwd, 'docs/roadmap.md'),
+    join(cwd, 'docs/features/main/roadmap.md'),
   ];
   const found = paths.find(p => existsSync(p));
   if (found) return found;
@@ -66,7 +66,7 @@ function findRoadmapFile(cwd: string): string | null {
   if (existsSync(featuresDir)) {
     try {
       for (const entry of readdirSync(featuresDir)) {
-        const p = join(featuresDir, entry, 'ROADMAP.md');
+        const p = join(featuresDir, entry, 'roadmap.md');
         if (existsSync(p)) return p;
       }
     } catch {}

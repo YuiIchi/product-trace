@@ -14,13 +14,13 @@ export async function sessionStart(): Promise<void> {
     saveSessionStart(cwd, headCommit);
   }
 
-  // Step 1: Find and read ROADMAP.md
+  // Step 1: Find and read roadmap.md
   const roadmapPath = findRoadmap(cwd);
 
   if (!roadmapPath) {
     console.log('📋 Product Trace');
     console.log();
-    console.log('未找到 ROADMAP.md');
+    console.log('未找到 roadmap.md');
     console.log('运行 pt init 初始化项目，或 cd 到项目根目录');
     return;
   }
@@ -45,7 +45,7 @@ export async function sessionStart(): Promise<void> {
 
   if (!current) {
     console.log('当前: 无活跃 Sprint');
-    console.log('在 ROADMAP.md 中标记 ← current 来激活 Sprint');
+    console.log('在 roadmap.md 中标记 ← current 来激活 Sprint');
     return;
   }
 
@@ -77,7 +77,7 @@ export async function sessionStart(): Promise<void> {
   console.log();
 
   // Step 2: Read spec.md and check drift
-  const featureDir = roadmapPath.replace('/ROADMAP.md', '');
+  const featureDir = roadmapPath.replace('/roadmap.md', '');
   const specPath = findSpecFile(featureDir, current.name);
   if (specPath && existsSync(specPath)) {
     const spec = parseSpec(readFileSync(specPath, 'utf-8'));

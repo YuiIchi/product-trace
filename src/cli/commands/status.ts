@@ -5,10 +5,10 @@ import { parseRoadmap, getCurrentSprint, getStoryStatus } from '../lib/roadmap';
 export function ptStatus(): void {
   const cwd = process.cwd();
 
-  // Find ROADMAP.md
+  // Find roadmap.md
   const roadmapPaths = [
-    join(cwd, 'docs/ROADMAP.md'),
-    join(cwd, 'docs/features/main/ROADMAP.md'),
+    join(cwd, 'docs/roadmap.md'),
+    join(cwd, 'docs/features/main/roadmap.md'),
   ];
 
   let roadmapPath = roadmapPaths.find(p => existsSync(p));
@@ -19,7 +19,7 @@ export function ptStatus(): void {
       try {
         const entries = require('fs').readdirSync(featuresDir);
         for (const entry of entries) {
-          const p = join(featuresDir, entry, 'ROADMAP.md');
+          const p = join(featuresDir, entry, 'roadmap.md');
           if (existsSync(p)) { roadmapPath = p; break; }
         }
       } catch {}
@@ -27,7 +27,7 @@ export function ptStatus(): void {
   }
 
   if (!roadmapPath) {
-    console.log('未找到 ROADMAP.md');
+    console.log('未找到 roadmap.md');
     console.log('运行 pt init 初始化项目');
     return;
   }

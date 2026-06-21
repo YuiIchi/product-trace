@@ -30,7 +30,7 @@ export function parseRoadmap(content: string): Roadmap {
     body = parsed.content;
   } catch (e: any) {
     throw new Error(
-      `ROADMAP.md frontmatter 解析失败: ${e.message}\n` +
+      `roadmap.md frontmatter 解析失败: ${e.message}\n` +
       `请检查 frontmatter 字段值是否含有特殊字符（如冒号、引号等）。\n` +
       `常见原因: last-updated 等字段中写了带冒号的注释。`
     );

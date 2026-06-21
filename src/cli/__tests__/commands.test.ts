@@ -45,7 +45,7 @@ describe('pt init', () => {
     ptInit();
     expect(existsSync(join(TEST_DIR, 'docs/features/main/sprints'))).toBe(true);
     expect(existsSync(join(TEST_DIR, 'docs/features/main/product-vision.md'))).toBe(true);
-    expect(existsSync(join(TEST_DIR, 'docs/features/main/ROADMAP.md'))).toBe(true);
+    expect(existsSync(join(TEST_DIR, 'docs/features/main/roadmap.md'))).toBe(true);
   });
 
   it('writes valid product-vision.md', () => {
@@ -55,8 +55,8 @@ describe('pt init', () => {
     expect(content).toContain('## 3. MVP 范围');
   });
 
-  it('writes valid ROADMAP.md with checkbox', () => {
-    const content = readFileSync(join(TEST_DIR, 'docs/features/main/ROADMAP.md'), 'utf-8');
+  it('writes valid roadmap.md with checkbox', () => {
+    const content = readFileSync(join(TEST_DIR, 'docs/features/main/roadmap.md'), 'utf-8');
     expect(content).toContain('doc: ROADMAP');
     expect(content).toContain('current-sprint: Sprint 1');
     expect(content).toContain('← current');
@@ -126,7 +126,7 @@ describe('pt status', () => {
   });
 
   it('shows [x] for completed stories', () => {
-    const roadmapPath = join(TEST_DIR, 'docs/features/main/ROADMAP.md');
+    const roadmapPath = join(TEST_DIR, 'docs/features/main/roadmap.md');
     let content = readFileSync(roadmapPath, 'utf-8');
     content = content.replace('[ ] Story-001', '[x] Story-001');
     writeFileSync(roadmapPath, content);
@@ -150,7 +150,7 @@ describe('pt progress', () => {
   });
 
   it('shows 100% when all stories done', () => {
-    const roadmapPath = join(TEST_DIR, 'docs/features/main/ROADMAP.md');
+    const roadmapPath = join(TEST_DIR, 'docs/features/main/roadmap.md');
     let content = readFileSync(roadmapPath, 'utf-8');
     content = content.replace('[ ] Story-001', '[x] Story-001');
     writeFileSync(roadmapPath, content);
@@ -161,7 +161,7 @@ describe('pt progress', () => {
   });
 
   it('shows mixed story states', () => {
-    const roadmapPath = join(TEST_DIR, 'docs/features/main/ROADMAP.md');
+    const roadmapPath = join(TEST_DIR, 'docs/features/main/roadmap.md');
     let content = readFileSync(roadmapPath, 'utf-8');
     content = content.replace(
       '- [x] Story-001: <标题> — <简述>',
@@ -180,7 +180,7 @@ describe('pt template', () => {
     const output = captureOutput(() => ptTemplate('unknown-template'));
     expect(output).toContain('未知模板');
     expect(output).toContain('product-vision');
-    expect(output).toContain('ROADMAP');
+    expect(output).toContain('roadmap');
     expect(output).toContain('spec');
   });
 
@@ -192,7 +192,7 @@ describe('pt template', () => {
   });
 
   it('returns content for all 7 templates', () => {
-    const names = ['product-vision', 'ROADMAP', 'architecture', 'ui-design-system', 'spec', 'acceptance', 'corrections'];
+    const names = ['product-vision', 'roadmap', 'architecture', 'ui-design-system', 'spec', 'acceptance', 'corrections'];
     for (const name of names) {
       const output = captureOutput(() => ptTemplate(name));
       expect(output.length).toBeGreaterThan(0);

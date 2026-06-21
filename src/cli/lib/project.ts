@@ -2,21 +2,21 @@ import { existsSync, readdirSync, readFileSync } from 'fs';
 import { join, dirname } from 'path';
 
 /**
- * Find ROADMAP.md in the project directory.
- * Searches docs/ROADMAP.md first, then docs/features/*\/ROADMAP.md.
+ * Find roadmap.md in the project directory.
+ * Searches docs/roadmap.md first, then docs/features/*\/roadmap.md.
  */
 export function findRoadmap(cwd: string): string | null {
   // Simple project structure
-  const simple = join(cwd, 'docs', 'ROADMAP.md');
+  const simple = join(cwd, 'docs', 'roadmap.md');
   if (existsSync(simple)) return simple;
 
-  // Feature-based structure: docs/features/<feature>/ROADMAP.md
+  // Feature-based structure: docs/features/<feature>/roadmap.md
   const featuresDir = join(cwd, 'docs', 'features');
   if (existsSync(featuresDir)) {
     try {
       const entries = readdirSync(featuresDir);
       for (const entry of entries) {
-        const path = join(featuresDir, entry, 'ROADMAP.md');
+        const path = join(featuresDir, entry, 'roadmap.md');
         if (existsSync(path)) return path;
       }
     } catch {}
@@ -26,7 +26,7 @@ export function findRoadmap(cwd: string): string | null {
 }
 
 /**
- * Find the sprints directory for a given feature dir path (where ROADMAP.md lives).
+ * Find the sprints directory for a given feature dir path (where roadmap.md lives).
  */
 export function findSprintsDir(featureDir: string): string | null {
   const sprintsDir = join(featureDir, 'sprints');

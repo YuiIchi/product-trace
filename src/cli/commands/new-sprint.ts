@@ -4,8 +4,8 @@ import { getTemplateContent } from '../lib/project';
 
 function findRoadmapFile(cwd: string): string | null {
   const paths = [
-    join(cwd, 'docs/ROADMAP.md'),
-    join(cwd, 'docs/features/main/ROADMAP.md'),
+    join(cwd, 'docs/roadmap.md'),
+    join(cwd, 'docs/features/main/roadmap.md'),
   ];
   const found = paths.find(p => existsSync(p));
   if (found) return found;
@@ -14,7 +14,7 @@ function findRoadmapFile(cwd: string): string | null {
   if (existsSync(featuresDir)) {
     try {
       for (const entry of readdirSync(featuresDir)) {
-        const p = join(featuresDir, entry, 'ROADMAP.md');
+        const p = join(featuresDir, entry, 'roadmap.md');
         if (existsSync(p)) return p;
       }
     } catch {}
@@ -32,7 +32,7 @@ export function ptNewSprint(): void {
 
   const roadmapPath = findRoadmapFile(cwd);
   if (!roadmapPath) {
-    console.log('未找到 ROADMAP.md。运行 pt init 初始化项目。');
+    console.log('未找到 roadmap.md。运行 pt init 初始化项目。');
     return;
   }
 
@@ -66,7 +66,7 @@ export function ptNewSprint(): void {
     .replace(/sprint: N/g, `sprint: ${nextNum}`)
     .replace(/Sprint N/g, `Sprint ${nextNum}`)
     .replace(/YYYY-MM-DD/g, today)
-    .replace(/ROADMAP\.md@vX/g, 'ROADMAP.md@v1.0');
+    .replace(/ROADMAP\.md@vX/g, 'roadmap.md@v1.0');
   writeFileSync(join(sprintDir, 'spec.md'), specContent);
   console.log(`  ✅ sprint-${nextNum}/spec.md`);
 
@@ -80,7 +80,7 @@ export function ptNewSprint(): void {
 
   console.log();
   console.log('下一步:');
-  console.log('  1. 在 ROADMAP.md 更新 Sprint 划分');
+  console.log('  1. 在 roadmap.md 更新 Sprint 划分');
   console.log('  2. 编辑 spec.md');
   console.log('  3. 运行 /product-trace-design 开始 Sprint Design');
 }

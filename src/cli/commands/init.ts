@@ -56,8 +56,8 @@ pivot-count: 0
 `,
     },
     {
-      path: `docs/features/${FEATURE_SLUG}/ROADMAP.md`,
-      templateName: 'ROADMAP',
+      path: `docs/features/${FEATURE_SLUG}/roadmap.md`,
+      templateName: 'roadmap',
       fallback: `---
 doc: ROADMAP
 feature: ${FEATURE_SLUG}

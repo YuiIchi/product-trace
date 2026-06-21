@@ -1,7 +1,7 @@
 import { getTemplateContent } from '../lib/project';
 
 const VALID_TEMPLATES = [
-  'product-vision', 'ROADMAP', 'architecture', 'ui-design-system',
+  'product-vision', 'roadmap', 'architecture', 'ui-design-system',
   'spec', 'acceptance', 'corrections',
 ];
 

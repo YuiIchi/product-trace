@@ -5,7 +5,7 @@ sprint: N
 version: 1.0
 status: draft
 last-verified-against:
-  upstream: ROADMAP.md@vX
+  upstream: roadmap.md@vX
   downstream: none
 open-corrections: 0
 last-correction: none

@@ -8,7 +8,7 @@ sprint: 2
 version: 1.3
 status: stable
 last-verified-against:
-  upstream: ROADMAP.md@v2.1
+  upstream: roadmap.md@v2.1
   downstream: abc123def
 open-corrections: 1
 last-correction: CORR-S2-004
@@ -30,7 +30,7 @@ describe('parseSpec', () => {
 
   it('extracts last-verified-against pointers', () => {
     const spec = parseSpec(sampleSpec);
-    expect(spec.lastVerifiedAgainst.upstream).toBe('ROADMAP.md@v2.1');
+    expect(spec.lastVerifiedAgainst.upstream).toBe('roadmap.md@v2.1');
     expect(spec.lastVerifiedAgainst.downstream).toBe('abc123def');
   });
 
