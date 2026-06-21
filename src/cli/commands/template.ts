@@ -2,7 +2,7 @@ import { getTemplateContent } from '../lib/project';
 
 const VALID_TEMPLATES = [
   'product-vision', 'roadmap', 'architecture', 'ui-design-system',
-  'spec', 'acceptance', 'corrections',
+  'spec', 'acceptance', 'corrections', 'prototype',
 ];
 
 export function ptTemplate(name: string): void {

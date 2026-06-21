@@ -40,7 +40,19 @@ description: "Sprint设计阶段。ROADMAP当前Sprint有Story待展开时 MUST 
 
 **3. 写用户旅程**：一个场景一个场景写。每个场景：前置条件是什么、用户一步步做了什么、系统每一步怎么反应。每写完一个场景向用户确认"这个流程对吗？"
 
-**4. 出原型（有前端时必须）**：在 `sprint-N/prototype/` 下放本 Sprint 的交互原型。用一个 HTML 文件覆盖本 Sprint 所有关键交互流。引用 `ui-design-system.md` 定义的设计语言（色彩/字体/间距）和组件库（Button/Input 等）——只在本 Sprint 需要新组件时才扩展组件库。原型不是完整产品，只画本 Sprint 增量，但必须可交互。写完原型向用户确认"交互流对吗？"
+**4. 出原型（有前端时必须）**：在 `sprint-N/prototype/sprint-N.html` 放本 Sprint 的中保真交互原型。标准如下：
+
+| 维度 | 标准 |
+|:--|:--|
+| 目的 | Build 前用最低成本验证交互流和状态覆盖。不是交付物，是校验工具 |
+| 交互完整性 | 本 Sprint 所有用户场景的完整路径可点击走通 |
+| 状态覆盖 | 每个场景四种状态：Loading / Empty / Error / Edge |
+| 组件一致性 | 使用 `ui-design-system.md` 定义的组件（Button/Input/Card/Modal），不自行造组件 |
+| 视觉精确度 | 结构正确即可，不追求像素级——视觉精确是 ui-design-system + 实现的责任 |
+| 可测性 | Verify 阶段可用截图工具对比实现和原型 |
+| 成本控制 | 一个 Sprint 的原型 30 分钟内可完成。不改 design-system 已有组件 |
+
+写完后打开原型让用户点一遍："交互流对吗？有漏状态吗？"
 
 **5. 写验收标准**：每条格式 `- [ ] AC-N: <可测试的描述> → 验证方式: <用什么命令或怎么手动验证>`。覆盖所有状态。有前端时加 UI 相关 AC：是否遵守 ui-design-system、是否和 prototype 一致。
 

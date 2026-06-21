@@ -80,6 +80,13 @@ export function ptNewSprint(): void {
   writeFileSync(join(sprintDir, `corrections-sprint-${nextNum}.md`), corrContent);
   console.log(`  ✅ sprint-${nextNum}/corrections-sprint-${nextNum}.md`);
 
+  // Read prototype template
+  const protoTemplate = getTemplateContent('prototype');
+  if (protoTemplate) {
+    writeFileSync(join(sprintDir, 'prototype', `sprint-${nextNum}.html`), protoTemplate);
+    console.log(`  ✅ sprint-${nextNum}/prototype/sprint-${nextNum}.html`);
+  }
+
   console.log();
   console.log('下一步:');
   console.log('  1. 在 roadmap.md 更新 Sprint 划分');
