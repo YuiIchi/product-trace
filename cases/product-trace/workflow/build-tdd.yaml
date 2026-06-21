@@ -12,9 +12,9 @@ config:
 setup:
   - command: "pt init"
   - command: "pt new-sprint"
-  - command: "mkdir -p docs/features/main/sprints/sprint-1"
+  - command: "mkdir -p .product-trace/features/main/sprints/sprint-1"
 
-prompt: "Sprint 1 的 spec 已经写好了在 docs/features/main/sprints/sprint-1/spec.md，帮我把 Story-001 实现出来。代码放 src/ 目录，用 TypeScript + vitest。"
+prompt: "Sprint 1 的 spec 已经写好了在 .product-trace/features/main/sprints/sprint-1/spec.md，帮我把 Story-001 实现出来。代码放 src/ 目录，用 TypeScript + vitest。"
 
 scoring:
   weights:

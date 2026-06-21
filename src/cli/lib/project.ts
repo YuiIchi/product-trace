@@ -3,15 +3,11 @@ import { join, dirname } from 'path';
 
 /**
  * Find roadmap.md in the project directory.
- * Searches docs/roadmap.md first, then docs/features/*\/roadmap.md.
+ * Searches .product-trace/features/*\/roadmap.md.
  */
 export function findRoadmap(cwd: string): string | null {
-  // Simple project structure
-  const simple = join(cwd, 'docs', 'roadmap.md');
-  if (existsSync(simple)) return simple;
-
-  // Feature-based structure: docs/features/<feature>/roadmap.md
-  const featuresDir = join(cwd, 'docs', 'features');
+  // Feature-based structure: .product-trace/features/<feature>/roadmap.md
+  const featuresDir = join(cwd, '.product-trace', 'features');
   if (existsSync(featuresDir)) {
     try {
       const entries = readdirSync(featuresDir);
@@ -57,7 +53,7 @@ export function findSpecFile(featureDir: string, sprintName: string): string | n
  * Find corrections file for any sprint.
  */
 export function findCorrectionsFile(cwd: string): string | null {
-  const featuresDir = join(cwd, 'docs', 'features');
+  const featuresDir = join(cwd, '.product-trace', 'features');
   if (!existsSync(featuresDir)) return null;
 
   try {

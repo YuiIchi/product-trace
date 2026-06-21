@@ -4,13 +4,12 @@ import { getTemplateContent } from '../lib/project';
 
 function findRoadmapFile(cwd: string): string | null {
   const paths = [
-    join(cwd, 'docs/roadmap.md'),
-    join(cwd, 'docs/features/main/roadmap.md'),
+    join(cwd, '.product-trace/features/main/roadmap.md'),
   ];
   const found = paths.find(p => existsSync(p));
   if (found) return found;
 
-  const featuresDir = join(cwd, 'docs/features');
+  const featuresDir = join(cwd, '.product-trace', 'features');
   if (existsSync(featuresDir)) {
     try {
       for (const entry of readdirSync(featuresDir)) {

@@ -52,7 +52,7 @@ scoring:
       2. 必须主动向用户提出澄清问题，一次只问一个。
       3. 问题应提供多个选项：「你倾向 A 还是 B？」
       4. 根据用户回答逐步推进，收集到足够信息后产出 product-vision.md。
-      5. product-vision.md 必须写入 docs/features/main/，包含：
+      5. product-vision.md 必须写入 .product-trace/features/main/，包含：
          - 问题与机会
          - 产品定位（一句话定位 + 价值主张 + 用户画像）
          - MVP 范围（含/不含表格）

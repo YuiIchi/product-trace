@@ -48,4 +48,4 @@ npm uninstall -g product-trace 2>/dev/null || true
 
 echo ""
 echo "✅ 卸载完成"
-echo "注意: docs/ 下的项目文档未被删除。如需删除请手动操作。"
+echo "注意: .product-trace/ 下的项目文档未被删除。如需删除请手动操作。"

@@ -33,7 +33,7 @@ program
 
 program
   .command('init')
-  .description('初始化 docs/ 目录结构 + 创建模板')
+  .description('初始化 .product-trace/ 目录结构 + 创建模板')
   .action(() => {
     ptInit();
     process.exit(0);

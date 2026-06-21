@@ -19,7 +19,7 @@ export function ptInit(): void {
   console.log();
 
   const dirs = [
-    `docs/features/${FEATURE_SLUG}/sprints`,
+    `.product-trace/features/${FEATURE_SLUG}/sprints`,
   ];
 
   for (const dir of dirs) {
@@ -34,7 +34,7 @@ export function ptInit(): void {
 
   const files: Array<{ path: string; templateName: string; fallback: string }> = [
     {
-      path: `docs/features/${FEATURE_SLUG}/product-vision.md`,
+      path: `.product-trace/features/${FEATURE_SLUG}/product-vision.md`,
       templateName: 'product-vision',
       fallback: `---
 doc: product-vision
@@ -56,7 +56,7 @@ pivot-count: 0
 `,
     },
     {
-      path: `docs/features/${FEATURE_SLUG}/roadmap.md`,
+      path: `.product-trace/features/${FEATURE_SLUG}/roadmap.md`,
       templateName: 'roadmap',
       fallback: `---
 doc: ROADMAP

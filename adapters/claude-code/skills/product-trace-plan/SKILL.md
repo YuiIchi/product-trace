@@ -9,7 +9,7 @@ description: "产品规划阶段。产品目标书已确认且用户说了 Go、
 
 前面 Discover 已经产出了产品目标书（product-vision.md），确认了"为什么做、做什么、不做哪些"。现在你是第二环——**把这份目标书拆成一张可执行的路线图，让所有人都知道：哪些功能要做、先做哪个后做哪个、做到哪了**。
 
-这份路线图叫 `docs/features/<feature-slug>/roadmap.md`。它是全项目最重要的文件——同时承担四个角色：功能清单、优先级排序、Sprint 划分、进度跟踪。之后每一个会话启动时，Agent 都靠读它来恢复上下文（"项目是什么、做到哪了、该做什么"）。如果项目有技术选型需要决策，还会产出一份架构说明 `architecture.md`。
+这份路线图叫 `.product-trace/features/<feature-slug>/roadmap.md`。它是全项目最重要的文件——同时承担四个角色：功能清单、优先级排序、Sprint 划分、进度跟踪。之后每一个会话启动时，Agent 都靠读它来恢复上下文（"项目是什么、做到哪了、该做什么"）。如果项目有技术选型需要决策，还会产出一份架构说明 `architecture.md`。
 
 **文档链**：我产出 roadmap.md（含 Sprint 划分和 Story 清单）+ architecture.md → Design 阶段读取 roadmap 当前 Sprint 的 Story 来展开用户旅程和验收标准。
 

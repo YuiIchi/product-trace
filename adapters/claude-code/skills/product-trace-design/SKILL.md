@@ -11,7 +11,7 @@ description: "Sprint设计阶段。ROADMAP当前Sprint有Story待展开时 MUST 
 
 **文档链**：我产出 sprint-N/spec.md → Build 阶段逐 Task 实现代码，Verify 阶段用它逐 AC 验收。
 
-这份执行手册叫 `docs/features/<feature>/sprints/sprint-N/spec.md`。它包含：用户完整的使用过程是怎样的、每个步骤有哪些状态要注意、做完之后怎么验证、数据要怎么存、代码怎么拆。之后 Build 和 Verify 阶段只参考这一份手册，不回查更上游的文档。
+这份执行手册叫 `.product-trace/features/<feature>/sprints/sprint-N/spec.md`。它包含：用户完整的使用过程是怎样的、每个步骤有哪些状态要注意、做完之后怎么验证、数据要怎么存、代码怎么拆。之后 Build 和 Verify 阶段只参考这一份手册，不回查更上游的文档。
 
 ## 什么时候该用我
 
