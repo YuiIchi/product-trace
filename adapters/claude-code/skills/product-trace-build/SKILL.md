@@ -1,15 +1,17 @@
 ---
 name: product-trace-build
-description: "Sprint开发阶段。执行手册(spec.md)就绪时 MUST 使用此 SKILL。你将按spec Task逐项开发——先写测试→确认失败→最小实现→确认通过→重构——每完成一个Story自检spec还准吗、派subagent做spec合规+代码质量双审查、更新roadmap checkbox进度。关键词：实现、开发、TDD、测试、checkbox。"
+description: "Sprint开发阶段。执行手册(spec.md)就绪时 MUST 使用此 SKILL。你将按spec Task逐项开发——先写测试→确认失败→最小实现→确认通过→重构——每完成一个Story自检spec还准吗、派subagent做spec合规+代码质量双审查、更新roadmap checkbox进度。有前端时读ui-design-system用已有组件、读prototype对齐交互流。关键词：实现、开发、TDD、测试、checkbox。"
 ---
 
 # Build — Sprint 开发
 
 ## 你的位置
 
-前面 Design 产出了执行手册（spec.md），里面写好了用户旅程、验收标准、Task 拆解。现在你是第四环——**按这份手册把代码写出来，每做完一个功能增量就自检一次"手册还准吗"，不准就记录下来而不是偷偷改掉**。
+前面 Design 产出了执行手册（spec.md）和 prototype/，Plan 产出了 UI 设计规范（ui-design-system.md）。现在你是第四环——**按这份手册把代码写出来，每做完一个功能增量就自检一次"手册还准吗"，不准就记录下来而不是偷偷改掉**。
 
-代码写完不是终点——每个 Story 完成后要更新 ROADMAP 里的 checkbox（`[ ]` → `[x]`），让路线图的进度永远和现实同步。整个 Sprint 开发完成后退出的那一刻，要对账——改了什么、进度如何、有没有偏差没处理。
+有前端时，读 `ui-design-system.md`——所有组件必须来自组件库，不要自行造轮子。读 prototype/——交互流必须和原型一致。
+
+代码写完不是终点——每个 Story 完成后要更新 roadmap 里的 checkbox（`[ ]` → `[x]`），让路线图的进度永远和现实同步。整个 Sprint 开发完成后退出的那一刻，要对账——改了什么、进度如何、有没有偏差没处理。
 
 **文档链**：我产出代码 + 更新 ROADMAP checkbox + 维护 corrections-sprint-N.md → Verify 阶段读取 spec 验收标准，对照我的代码逐条独立验证。
 
