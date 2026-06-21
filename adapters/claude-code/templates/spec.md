@@ -29,6 +29,8 @@ last-correction: none
 ## 2. 验收标准
 - [ ] AC-1: <可测试的描述>
   验证方式: <命令或手动步骤>
+- [ ] AC-UI: <有前端时加：遵守 ui-design-system、与 prototype 一致>
+  验证方式: 截图对比 prototype/ + 检查 design-system
 
 ## 3. 数据模型（本次新增/变更）
 | 实体 | 字段 | 类型 | 必填 | 说明 |

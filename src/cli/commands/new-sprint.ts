@@ -53,8 +53,10 @@ export function ptNewSprint(): void {
 
   mkdirSync(sprintDir, { recursive: true });
   mkdirSync(join(sprintDir, 'acceptance'), { recursive: true });
+  mkdirSync(join(sprintDir, 'prototype'), { recursive: true });
   console.log(`  ✅ sprint-${nextNum}/`);
   console.log(`  ✅ sprint-${nextNum}/acceptance/`);
+  console.log(`  ✅ sprint-${nextNum}/prototype/`);
 
   const today = new Date().toISOString().split('T')[0];
   const feature = extractFeature(roadmapPath);
