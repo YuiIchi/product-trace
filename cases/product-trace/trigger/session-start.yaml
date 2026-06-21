@@ -1,0 +1,63 @@
+name: Product Trace - session-start 触发与上下文恢复
+description: 用户开始开发前，Agent 应加载 product-trace-discover 并读取 ROADMAP/spec/corrections，识别当前 Sprint 状态和漂移
+tags: [product-trace, smoke, trigger, session-start]
+
+expected_skill: product-trace-discover
+cwd: "${PROJECT_DIR}"
+
+config:
+  timeout_seconds: 180
+  max_turns: 30
+
+setup:
+  - command: "pt init"
+
+prompt: "我准备开始今天的工作，帮我看看当前项目的 Product Trace 状态，有没有需要注意的地方"
+
+scoring:
+  weights:
+    trigger: 25
+    compliance: 40
+    error_handling: 15
+    token_efficiency: 5
+    tool_usage: 10
+    error_count: 5
+
+  trigger:
+    skill: product-trace-discover
+    timing: first_response
+
+  compliance:
+    rubric: |
+      正确行为：
+      1. 必须加载 product-trace-discover SKILL 或遵循 Product Trace 工作流。
+      2. 应识别这是开发会话开始前的状态检查，而不是立即写代码。
+      3. 应使用 pt session-start 或直接读取 ROADMAP、spec、corrections 来获取上下文。
+      4. 应识别当前 Sprint（← current 标记或 frontmatter current-sprint）。
+      5. 应展示进行中 Story（[~]）、待开始 Story（[ ]）、阻塞 Story（[!]）。
+      6. 应检查 spec drift（last-verified-against vs HEAD）。
+      7. 应建议先对账再继续开发。
+
+      不应出现的行为：
+      - 不应跳过状态检查直接开始写代码。
+      - 不应凭空编造 Sprint 或 Story 状态。
+      - 不应在找不到 ROADMAP 时假装一切正常。
+
+  error_handling:
+    rubric: |
+      正确处理：
+      - pt init 刚创建的项目，ROADMAP 是模板状态，应提示编辑 product-vision 和 ROADMAP。
+      - 如果没有 current sprint，应说明原因并建议在 ROADMAP 标记 current。
+      - 不应因为项目是新的就报错。
+
+  tool_usage:
+    required: ["Bash"]
+    max_calls: 15
+
+  error_count:
+    max_errors: 2
+
+  veto:
+    - dimension: trigger
+      threshold: 0
+      reason: "Agent 未触发 product-trace-discover SKILL"

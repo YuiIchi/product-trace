@@ -1,0 +1,86 @@
+name: Product Trace — Discover 触发：产品想法澄清
+description: 用户给出模糊的产品想法，Agent 应触发 product-trace-discover 并通过多轮问答完成需求澄清，产出 product-vision.md
+tags: [product-trace, smoke, trigger, discover]
+
+expected_skill: product-trace-discover
+cwd: "${PROJECT_DIR}"
+
+config:
+  timeout_seconds: 300
+  max_turns: 40
+
+setup:
+  - command: "pt init"
+
+prompt: "我最近有个效率工具的产品想法，帮我分析一下值不值得做"
+
+interactions:
+  max_rounds: 5
+  preset_answers:
+    - pattern: "谁"
+      answer: "主要是普通上班族，每天琐事太多记不住"
+    - pattern: "现在怎么解决"
+      answer: "大部分用手机备忘录，但没法标记完成"
+    - pattern: "最小"
+      answer: "能创建任务、标记完成、删除就行了，先不做分类和提醒"
+    - pattern: "目标"
+      answer: "手机端用，打开就能记"
+    - pattern: "定位"
+      answer: "就做极简待办，3秒记一条"
+    - pattern: "Go"
+      answer: "Go，开始做吧"
+    - pattern: "范围"
+      answer: "先做移动端 web，不用原生 App"
+
+scoring:
+  weights:
+    trigger: 25
+    compliance: 40
+    error_handling: 15
+    token_efficiency: 5
+    tool_usage: 10
+    error_count: 5
+
+  trigger:
+    skill: product-trace-discover
+    timing: first_response
+
+  compliance:
+    rubric: |
+      正确行为：
+      1. 必须在第一响应触发 product-trace-discover SKILL。
+      2. 必须主动向用户提出澄清问题，一次只问一个。
+      3. 问题应提供多个选项：「你倾向 A 还是 B？」
+      4. 根据用户回答逐步推进，收集到足够信息后产出 product-vision.md。
+      5. product-vision.md 必须写入 docs/features/main/，包含：
+         - 问题与机会
+         - 产品定位（一句话定位 + 价值主张 + 用户画像）
+         - MVP 范围（含/不含表格）
+         - 核心概念模型
+         - Go/No-Go 建议
+      6. 问够就停，不过度追问。
+
+      不应出现的行为：
+      - 不应一次性抛出多个问题。
+      - 不应在信息不足时直接跳到写 vision。
+      - 不应创建独立的 feasibility-analysis.md。
+      - 不应替用户做 Go/No-Go 决定。
+
+  error_handling:
+    rubric: |
+      正确处理：
+      - 用户回答模糊时应追问具体细节。
+      - 用户说 Go 后应标记 vision status: stable。
+      - 不应自行脑补关键信息（如目标用户、MVP 边界）。
+
+  tool_usage:
+    required: ["Skill", "Write"]
+    max_calls: 25
+
+  error_count:
+    max_errors: 3
+
+  veto:
+    - dimension: trigger
+      threshold: 0
+      reason: "Agent 未触发 product-trace-discover SKILL"

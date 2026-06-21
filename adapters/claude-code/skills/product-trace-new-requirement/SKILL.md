@@ -1,49 +1,61 @@
 ---
 name: product-trace-new-requirement
-description: 当有新需求到达且不属于当前 Sprint 时使用。判定增量/新Feature/紧急，分级处理，插入正确的流程位置。更新 ROADMAP.md。
+description: 新需求门控。当开发过程中有新需求到达（不属于当前 Sprint）时 MUST 使用此 SKILL。你将判定增量/新Feature/紧急，按级别插入正确的流程位置。更新 ROADMAP.md。关键词：新需求、增量、紧急需求、Feature、Backlog、门控。
 ---
 
-# Product Trace: New Requirement
+# Product Trace — New Requirement（新需求门控）
 
-## 目标
+## 背景知识
 
-新需求到达时，按影响范围分级，插入正确的流程位置。**不让新需求无声溜进 Sprint。**
+在 Sprint 进行中，经常会有新需求进来。不是所有新需求都应该直接插入当前 Sprint。New Requirement 是新需求的门控——分级处理。
 
-## 你的角色
+## 可用工具
 
-你是门控。判断新需求该走哪个流程、插在哪里、代价是什么。
+| 命令 | 用途 |
+|:--|:--|
+| `pt session-start` | 读取当前上下文 |
+| `pt status` | 查看当前 Sprint 状态 |
 
-## 三级处理
+通过 Read 工具读取 ROADMAP.md。通过 Edit 工具更新 ROADMAP 和 spec。
 
-| 级别 | 判定 | 流程 |
+## 核心概念
+
+| 概念 | 说明 |
+|:--|:--|
+| 增量需求 | 不改变产品方向、不新增用户类型、不改变架构。如"加个搜索功能" |
+| 新 Feature | 独立产品模块、新用户类型、架构变化。如"加用户认证系统" |
+| 紧急需求 | 线上问题、阻塞发布。如"保存按钮不工作了" |
+| `[!]` 标记 | ROADMAP 中因阻塞或紧急插入而标记的 Story，需附原因 |
+
+## 执行流程
+
+### Step 1：判定级别
+
+收到新需求后，判断属于哪级：
+
+| 判定条件 | 级别 | 处理方式 |
 |:--|:--|:--|
-| **增量** | 不改变产品方向、不新增用户类型、不改变架构 | 定位归属 → Backlog 或下 Sprint |
-| **新 Feature** | 独立产品模块、新用户类型、架构变化 | 完整 Discover → Plan |
-| **紧急** | 线上问题、阻塞发布 | 插入当前 Sprint → [!] + 记录代价 |
+| 不改变产品方向、不新增用户类型、不改变架构 | 增量 | 加入 Backlog 或下个 Sprint |
+| 独立模块、新用户类型、架构变化 | 新 Feature | 走完整 Discover → Plan |
+| 线上问题、阻塞当前发布 | 紧急 | 插入当前 Sprint，标记 `[!]` |
 
-## 流程
+向用户确认判定结果。
 
-### 增量处理
+### Step 2：增量处理
 
-1. 定位：对应 ROADMAP 哪个已有 Story？还是新 Story？
-2. 正常优先级 → Backlog (P1/P2)
-3. 紧急 P0 → 插入当前 Sprint spec.md
-4. 更新 ROADMAP.md
+1. 定位：对应 ROADMAP 中哪个已有 Story？还是新 Story？
+2. 正常优先级 → 加入 Backlog，标注 P1/P2
+3. 用 Edit 更新 ROADMAP.md
 
-### 新 Feature 处理
+### Step 3：新 Feature 处理
 
-1. 完整走 **product-trace-discover** → 产出 product-vision.md
-2. 走 **product-trace-plan** → 独立 ROADMAP（低耦合时）或合并到现有 ROADMAP
+1. 在 `docs/features/<new-feature-slug>/` 下创建独立文档目录
+2. 告知用户用 `/product-trace-discover` 开始新 Feature 的 Discover
+3. 在现有 ROADMAP 中加一段 `## Feature Tracks` 交叉引用新 Feature 的 ROADMAP
 
-### 紧急处理
+### Step 4：紧急处理
 
-1. 插入当前 Sprint spec.md
-2. ROADMAP 标记 `[!]`
-3. **显式记录代价**："因紧急需求插入，原计划 Story-X 延期到 Sprint N+1"
-4. 更新 ROADMAP + spec
-
-## 不做的事
-
-- ❌ 不让增量绕开任何门控（至少轻量判定）
-- ❌ 不让紧急需求无声插入（必须记录代价和影响）
-- ❌ 不在 Sprint 中途随便加 Story（紧急是唯一例外）
+1. 将需求作为新 Story 插入当前 Sprint 的 spec.md
+2. 在 ROADMAP 中标记 `[!]` 并注明阻塞原因
+3. 显式记录代价："因紧急需求 Story-Hotfix 插入，原 Story-X 延期到 Sprint N+1"
+4. 用 Edit 更新 ROADMAP.md 和 spec.md

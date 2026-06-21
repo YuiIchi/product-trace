@@ -1,0 +1,8 @@
+name: Product Trace Smoke
+description: 快速验证 Product Trace SKILL 触发
+cases:
+  - ../product-trace/trigger/discover.yaml
+defaults:
+  config:
+    timeout_seconds: 180
+    max_turns: 25

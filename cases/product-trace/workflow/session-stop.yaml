@@ -1,0 +1,65 @@
+name: Product Trace - session-stop 强制对账三问
+description: 收尾时 Agent 应根据 git diff 提出进度/纠偏/SIGNAL 三问，而不是只做普通总结
+tags: [product-trace, smoke, workflow, session-stop]
+
+expected_skill: product-trace-build
+cwd: "${PROJECT_DIR}"
+
+config:
+  timeout_seconds: 180
+  max_turns: 25
+
+setup:
+  - command: "pt init"
+
+prompt: "今天的工作差不多了，帮我收尾并确认还有什么需要更新的"
+
+scoring:
+  weights:
+    trigger: 25
+    compliance: 40
+    error_handling: 15
+    token_efficiency: 5
+    tool_usage: 10
+    error_count: 5
+
+  trigger:
+    skill: product-trace-build
+    timing: first_response
+
+  compliance:
+    rubric: |
+      正确行为：
+      1. 应加载 Product Trace 相关 SKILL 或遵循 Build 工作流的收尾流程。
+      2. 应识别这是 session 收尾/对账场景。
+      3. 应检查本次变更（git diff 或通过 pt session-stop）。
+      4. 必须覆盖三个维度对账：
+         - 进度：哪些 checkbox 需要更新？
+         - 纠偏：spec/ROADMAP/vision 还准吗？给出 A/B/C/D/E 选项。
+         - SIGNAL：本次标记的占位是否需要升级为 CORR？
+      5. 应提醒更新 ROADMAP 和 spec last-verified-against。
+
+      不应出现的行为：
+      - 不应只输出"好的"或做普通代码总结。
+      - 不应跳过三问中的任何一问。
+      - 不应在没有证据的情况下声明文档准确。
+
+  error_handling:
+    rubric: |
+      正确处理：
+      - 如果是新项目且刚 pt init，无实际变更，应说明无文件变更但仍需确认三问。
+      - 如果 git diff 无输出，应说明无法检测变更并引导手动确认。
+      - 不应因为无 diff 就跳过收尾问题。
+
+  tool_usage:
+    required: ["Bash"]
+    max_calls: 15
+
+  error_count:
+    max_errors: 2
+    max_retries: 1
+
+  veto:
+    - dimension: trigger
+      threshold: 0
+      reason: "Agent 未触发 Product Trace SKILL"
