@@ -11,6 +11,8 @@ description: "Sprint开发阶段。执行手册(spec.md)就绪时 MUST 使用此
 
 代码写完不是终点——每个 Story 完成后要更新 ROADMAP 里的 checkbox（`[ ]` → `[x]`），让路线图的进度永远和现实同步。整个 Sprint 开发完成后退出的那一刻，要对账——改了什么、进度如何、有没有偏差没处理。
 
+**文档链**：我产出代码 + 更新 ROADMAP checkbox + 维护 corrections-sprint-N.md → Verify 阶段读取 spec 验收标准，对照我的代码逐条独立验证。
+
 ## 什么时候该用我
 
 - sprint-N/spec.md 已经写好（status: stable）
