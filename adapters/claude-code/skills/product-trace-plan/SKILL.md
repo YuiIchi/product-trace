@@ -11,6 +11,8 @@ description: "产品规划阶段。产品目标书已确认且用户说了 Go、
 
 这份路线图叫 `docs/features/<feature-slug>/ROADMAP.md`。它是全项目最重要的文件——同时承担四个角色：功能清单、优先级排序、Sprint 划分、进度跟踪。之后每一个会话启动时，Agent 都靠读它来恢复上下文（"项目是什么、做到哪了、该做什么"）。如果项目有技术选型需要决策，还会产出一份架构说明 `architecture.md`。
 
+**文档链**：我产出 ROADMAP.md（含 Sprint 划分和 Story 清单）+ architecture.md → Design 阶段读取 ROADMAP 当前 Sprint 的 Story 来展开用户旅程和验收标准。
+
 ## 什么时候该用我
 
 - product-vision.md 已经写好（status: stable）且用户明确说了 Go
