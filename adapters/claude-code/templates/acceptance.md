@@ -1,14 +1,14 @@
-# Sprint N 验收报告 vN
-
 ---
 doc: acceptance
 feature: <feature-slug>
 sprint: N
-version: N
+version: 1
 status: draft
 spec-version-at-time: spec.md@v1.0
 superseded-by: none
 ---
+
+# Sprint N 验收报告 vN
 
 ## 验收环境
 - 分支 / Commit
@@ -24,6 +24,8 @@ superseded-by: none
 > 结论: 无漂移 / 已记录 / ⚠️ silent drift
 
 ## 发现的问题
+| # | 问题 | AC | 严重度 | 状态 |
+|:--|:--|:--|:--|:--|
 
 ## 结论
 - [ ] ✅ 通过 / ⚠️ 有条件通过 / ❌ 不通过

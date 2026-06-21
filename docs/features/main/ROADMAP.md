@@ -1,16 +1,16 @@
+# ROADMAP — <Feature 名称>
+
 ---
 doc: ROADMAP
-feature: <feature-slug>
+feature: main
 version: 1.0
 status: draft
-last-updated: YYYY-MM-DD
+last-updated: 2026-06-21
 current-sprint: Sprint 1
 open-corrections: 0
 ---
 
-# ROADMAP — <Feature 名称>
-
-> 最后更新: YYYY-MM-DD
+> 最后更新: 2026-06-21
 > 当前 Sprint: Sprint 1 ← current
 
 ## 工作流状态
@@ -24,5 +24,3 @@ open-corrections: 0
 ## Backlog
 
 ## 变更记录
-| 版本 | 日期 | 变更内容 | 触发原因 |
-|:--|:--|:--|:--|

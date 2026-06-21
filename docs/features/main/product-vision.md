@@ -1,13 +1,13 @@
+# <产品/Feature 名称>
+
 ---
 doc: product-vision
-feature: <feature-slug>
+feature: main
 version: 1.0
 status: draft
-last-updated: YYYY-MM-DD
+last-updated: 2026-06-21
 pivot-count: 0
 ---
-
-# <产品/Feature 名称>
 
 ## 1. 问题与机会
 - 谁的什么问题
@@ -24,12 +24,7 @@ pivot-count: 0
 |:--|:--|:--|
 
 ## 4. 核心概念模型
-2-3 个关键领域概念及其关系。
 
 ## 5. 关键风险与技术可行性
-- 最大的风险是什么
-- Go / No-Go / Conditional Go 建议
 
 ## 6. 变更记录
-| 版本 | 日期 | 变更内容 | 触发原因 |
-|:--|:--|:--|:--|

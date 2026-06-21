@@ -1,11 +1,64 @@
-import { mkdirSync, writeFileSync, existsSync, readFileSync } from 'fs';
+import { mkdirSync, writeFileSync, existsSync } from 'fs';
 import { join } from 'path';
+import { getTemplateContent } from '../lib/project';
 
 const FEATURE_SLUG = 'main';
 const TODAY = new Date().toISOString().split('T')[0];
 
-function getRoadmapTemplate(): string {
-  return `---
+function fillTemplate(template: string | null, fallback: string): string {
+  if (!template) return fallback;
+  return template
+    .replace(/<feature-slug>/g, FEATURE_SLUG)
+    .replace(/YYYY-MM-DD/g, TODAY);
+}
+
+export function ptInit(): void {
+  const cwd = process.cwd();
+
+  console.log('=== Product Trace 初始化 ===');
+  console.log();
+
+  const dirs = [
+    `docs/features/${FEATURE_SLUG}/sprints`,
+  ];
+
+  for (const dir of dirs) {
+    const fullPath = join(cwd, dir);
+    if (!existsSync(fullPath)) {
+      mkdirSync(fullPath, { recursive: true });
+      console.log(`  ✅ ${dir}/`);
+    } else {
+      console.log(`  ⏭️  ${dir}/ (已存在)`);
+    }
+  }
+
+  const files: Array<{ path: string; templateName: string; fallback: string }> = [
+    {
+      path: `docs/features/${FEATURE_SLUG}/product-vision.md`,
+      templateName: 'product-vision',
+      fallback: `---
+doc: product-vision
+feature: ${FEATURE_SLUG}
+version: 1.0
+status: draft
+last-updated: ${TODAY}
+pivot-count: 0
+---
+
+# <产品/Feature 名称>
+
+## 1. 问题与机会
+## 2. 产品定位
+## 3. MVP 范围
+## 4. 核心概念模型
+## 5. 关键风险与技术可行性
+## 6. 变更记录
+`,
+    },
+    {
+      path: `docs/features/${FEATURE_SLUG}/ROADMAP.md`,
+      templateName: 'ROADMAP',
+      fallback: `---
 doc: ROADMAP
 feature: ${FEATURE_SLUG}
 version: 1.0
@@ -29,79 +82,15 @@ open-corrections: 0
 - [ ] Story-001: <标题> — <简述>
 
 ## Backlog
-`;
-}
-
-function getVisionTemplate(): string {
-  return `---
-doc: product-vision
-feature: ${FEATURE_SLUG}
-version: 1.0
-status: draft
-last-updated: ${TODAY}
-pivot-count: 0
----
-
-# <产品/Feature 名称>
-
-## 1. 问题与机会
-- 谁的什么问题
-- 他们现在怎么解决的
-- 为什么现有方案不够
-
-## 2. 产品定位
-- 一句话定位
-- 核心价值主张
-- 目标用户（一句话画像）
-
-## 3. MVP 范围
-| 维度 | 包含 | 不包含 |
-|:--|:--|:--|
-| 用户 | ... | ... |
-| 功能 | ... | ... |
-| 平台 | ... | ... |
-
-## 4. 核心概念模型
-2-3 个关键领域概念及其关系。
-
-## 5. 关键风险与技术可行性
-- 最大的技术/市场/资源风险，附缓解策略
-- Go / No-Go / Conditional Go 建议
-
-## 6. 变更记录
-| 版本 | 日期 | 变更内容 | 触发原因 |
-|:--|:--|:--|:--|
-`;
-}
-
-export function ptInit(): void {
-  const cwd = process.cwd();
-
-  console.log('=== Product Trace 初始化 ===');
-  console.log();
-
-  const dirs = [
-    `docs/features/${FEATURE_SLUG}/sprints`,
+`,
+    },
   ];
 
-  for (const dir of dirs) {
-    const fullPath = join(cwd, dir);
-    if (!existsSync(fullPath)) {
-      mkdirSync(fullPath, { recursive: true });
-      console.log(`  ✅ ${dir}/`);
-    } else {
-      console.log(`  ⏭️  ${dir}/ (已存在)`);
-    }
-  }
-
-  const files: Record<string, string> = {
-    [`docs/features/${FEATURE_SLUG}/product-vision.md`]: getVisionTemplate(),
-    [`docs/features/${FEATURE_SLUG}/ROADMAP.md`]: getRoadmapTemplate(),
-  };
-
-  for (const [filePath, content] of Object.entries(files)) {
+  for (const { path: filePath, templateName, fallback } of files) {
     const fullPath = join(cwd, filePath);
     if (!existsSync(fullPath)) {
+      const template = getTemplateContent(templateName);
+      const content = fillTemplate(template, fallback);
       writeFileSync(fullPath, content);
       console.log(`  ✅ ${filePath}`);
     } else {
@@ -115,6 +104,7 @@ export function ptInit(): void {
     writeFileSync(gitignorePath, '.pt-session\n');
     console.log('  ✅ .gitignore');
   } else {
+    const { readFileSync } = require('fs');
     const existing = readFileSync(gitignorePath, 'utf-8');
     if (!existing.includes('.pt-session')) {
       writeFileSync(gitignorePath, existing.trimEnd() + '\n.pt-session\n');

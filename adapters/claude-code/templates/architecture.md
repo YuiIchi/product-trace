@@ -1,5 +1,3 @@
-# 技术架构 — <Feature 名称>
-
 ---
 doc: architecture
 feature: <feature-slug>
@@ -8,6 +6,8 @@ status: draft
 last-updated: YYYY-MM-DD
 adr-count: 0
 ---
+
+# 技术架构 — <Feature 名称>
 
 ## 1. 架构概览
 
@@ -18,3 +18,8 @@ adr-count: 0
 ## 3. 核心数据模型
 
 ## 4. 关键决策记录（ADR）
+### ADR-001: <决策标题>
+- 决策: ...
+- 理由: ...
+- 替代方案: ...
+- 权衡: ...
