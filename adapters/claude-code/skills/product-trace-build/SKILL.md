@@ -7,11 +7,12 @@ description: "Sprint开发阶段。执行手册(spec.md)就绪时 MUST 使用此
 
 ## 你的位置
 
-前面 Design 产出了执行手册（spec.md）和 prototype/，Plan 产出了 UI 设计规范（ui-design-system.md）。现在你是第四环——**按这份手册把代码写出来，每做完一个功能增量就自检一次"手册还准吗"，不准就记录下来而不是偷偷改掉**。
+前面 Design 产出了执行手册（spec.md）和 prototype/，Plan 产出了 UI 设计规范（ui-design-system.md）。现在你是第四环——**按这份手册把代码写出来，每做完一个功能增量就自检、审查、更新进度**。
 
-有前端时，读 `ui-design-system.md`——所有组件必须来自组件库，不要自行造轮子。读 prototype/——交互流必须和原型一致。
-
-代码写完不是终点——每个 Story 完成后要更新 roadmap 里的 checkbox（`[ ]` → `[x]`），让路线图的进度永远和现实同步。整个 Sprint 开发完成后退出的那一刻，要对账——改了什么、进度如何、有没有偏差没处理。
+你的输入是三份文件：
+1. **spec.md** — 用户旅程（每个场景的四态）、验收标准（AC）、数据模型、Task 拆解（含文件路径和完成标准）
+2. **ui-design-system.md** — 设计令牌、组件库（每个组件的变体+状态+使用场景）、布局规范、交互规范（有前端时）
+3. **prototype/** — 中保真交互原型（有前端时）
 
 **文档链**：我产出代码 + 更新 ROADMAP checkbox + 维护 corrections-sprint-N.md → Verify 阶段读取 spec 验收标准，对照我的代码逐条独立验证。
 
@@ -24,15 +25,47 @@ description: "Sprint开发阶段。执行手册(spec.md)就绪时 MUST 使用此
 
 ## 核心概念
 
-红→绿→重构——写每一个函数的三步曲：
+### TDD：红 → 绿 → 重构
 
-1. **红**：先写一个会失败的测试。不写测试就不知道实现对不对
-2. **绿**：写最少代码让测试通过。不要多写——测试没要求的就不做
-3. **重构**：测试绿了之后，清理代码结构、命名、消除重复——保持测试绿
+**铁律：没有先写失败的测试，不准写实现代码。**
 
-**自检**：每完成一个 Story，对照 spec 问自己"用户旅程还准吗？AC 还覆盖吗？"
-**SIGNAL**：实现中发现 spec 描述不够准确时的临时标记，记在 corrections 文件里，不中断开发流程。会话结束时决定是否升级
-**审查**：每个 Story 完成派两个独立的 subagent——一个检查"代码是不是按 spec 写的"（多做？少做？），一个检查"代码质量"（命名、结构、边界）
+```
+RED:   写一个会失败的测试 → 运行 → 确认它因"功能缺失"而失败（不是语法错误）
+GREEN: 写最少代码让测试通过 → 运行 → 全绿
+REFACTOR: 清理代码结构、命名、去重 → 运行 → 保持全绿
+```
+
+**测试从哪里来**：从 spec.md 的验收标准来。每条 AC 对应一个或多个测试。测试描述一个用户可见的行为，不是内部实现。
+
+| 好测试 | 坏测试 |
+|:--|:--|
+| `test('输入"买牛奶"回车后，任务出现在列表顶部')` | `test('addTodo 函数正常工作')` |
+| `test('网络断开时显示"加载失败，点击重试"')` | `test('error state handled')` |
+| 测试用户看到的结果 | 测试内部函数调用 |
+
+### 四态覆盖
+
+spec 的用户旅程为每个场景定义了四种状态。每个涉及用户交互的 Task 必须覆盖：
+
+| 状态 | 含义 | 测试要点 |
+|:--|:--|:--|
+| **Loading** | 数据还在加载中 | 骨架屏/loading 动画是否显示？异步操作是否最终完成？ |
+| **Empty** | 数据为空（首次使用、清空后） | 是否显示空态引导（如"还没有任务，创建第一个"）？ |
+| **Error** | 操作失败（网络、权限、超时） | 错误信息是否清晰？是否有重试入口？ |
+| **Edge** | 边界（超长文本、并发、极限数据） | 输入 1000 字会怎样？同一秒双击提交会怎样？ |
+
+有前端时，每态必须有对应的 UI 呈现——不是 `console.log`。
+
+### 组件一致性
+
+有前端时，所有 UI 组件必须来自 `ui-design-system.md`。**禁止自行创建组件**——如果 ui-design-system 缺少需要的组件，触发 `/product-trace-correct`（L0：在 ui-design-system 里新增组件定义，然后使用）。
+
+交互流必须和 prototype 一致——用户点击的路径、状态转换的触发条件、每个状态的界面表现，不得偏离。
+
+### SIGNAL 与 CORR
+
+- **SIGNAL**：实现中发现 spec 描述不够准确，但不影响其他 Story 也不影响验收标准。记在 corrections 文件的 `## SIGNAL 占位` 段，不中断开发。格式：`- [日期] SIGNAL: <一句话>`
+- **CORR**：偏差影响验收标准或范围 → 停下手头 Task，触发 `/product-trace-correct`
 
 ## 你能用的工具
 
@@ -47,17 +80,103 @@ Bash 用来跑项目的测试和构建命令。
 
 ## 一步步做
 
-**1. 进上下文**：`pt session-start`，确认当前 Sprint 和进行中的 Story。
+### 1. 进上下文
 
-**2. 按 Task 逐个做**：读 spec.md 找到当前 Story 第一个未完成的 Task。对每个 Task：红→绿→重构→Task [x]→git commit。
+`pt session-start`。确认当前 Sprint、当前 Story 进度、open corrections、SIGNAL 积压。
 
-**3. 每 Story 完成后自检**：spec 还准吗？准→更新 ROADMAP checkbox `[x]`。不准→触发 `/product-trace-correct`。
+### 2. 逐个 Story 开发
 
-**4. 每 Story 完成后审查**：派独立 subagent 做 spec 合规检查（spec+diff，多做/少做？）和代码质量检查（diff，命名/边界）。发现的问题修了再查。
+读 spec.md 找到当前 Story 的所有 Task。**一次只做一个 Task，不走捷径。**
 
-**5. 发现偏差时**：小改动记 SIGNAL 占位；涉及验收标准或范围的大改动立即触发 `/product-trace-correct`。
+#### 对每个 Task：
 
-**6. 全部 Story 完成后**：`pt session-stop`——回答三个必答题：进度更新、spec 还准吗（A=准/B=L0/C=L1/D=L2/E=L3）、SIGNAL 升级吗。
+**Step A: 读 Task 上下文**
+
+Task 里有三个关键信息：目标一句话、涉及文件、完成标准。不要跳过——打开涉及的源文件和测试文件，确认当前状态。
+
+**Step B: 写测试（RED）**
+
+从 spec 该 Task 对应的 AC 派生测试。测试命名：`<AC 描述> → 验证方式`。每条 AC 至少一个测试。覆盖四态中 Task 涉及的状态。
+
+写入测试文件。运行测试——必须失败。失败原因必须是"功能还没实现"，不是语法错误或引用了不存在的模块。测试通过说明你测的是已存在的行为，修测试。
+
+**Step C: 实现（GREEN）**
+
+写最少代码让测试通过。不提前做"以后可能需要"的功能。不优化没被测试覆盖的路径。
+
+读 ui-design-system.md 确认使用的组件存在。读 prototype 确认交互流一致。
+
+代码写完，运行测试——必须全绿。
+
+**Step D: 重构（REFACTOR）**
+
+测试绿了之后：命名是否清晰？有没有重复代码可以提取？逻辑是否简单？重构后运行测试——必须保持全绿。
+
+**Step E: 提交**
+
+`git add` + `git commit`。commit message 格式：`feat(Story-001): <Task 描述>`
+
+### 3. 每个 Story 完成后
+
+一个 Story 的全部 Task 完成后，做三件事：
+
+#### 3a. 自检
+
+对照 spec 逐项检查：
+- [ ] 本 Story 的 Task 全部完成？
+- [ ] 本 Story 的 AC 全部通过测试？
+- [ ] 用户旅程中的 Loading/Empty/Error/Edge 四态都已实现？
+- [ ] 有前端时：所有组件来自 ui-design-system？
+- [ ] 有前端时：交互流与 prototype 一致？
+- [ ] spec 里的描述还准确吗？（实现中发现的任何不一致=偏差）
+
+#### 3b. 双审查（派独立 subagent）
+
+**审查 1 — spec 合规**（不能同时做审查 2，必须先合规再质量）：
+
+派 subagent，只给 spec.md 的该 Story 段 + git diff。让它判断：
+- spec 要求的都实现了吗？（少的）
+- 有没有实现 spec 没要求的东西？（多的）
+- 四态覆盖完整吗？
+
+subagent 提示模板：
+```
+你是 spec 合规审查。只判断"实现是否和 spec 一致"：
+1. 读 spec.md 中 Story-00N 段的用户旅程、AC、数据模型
+2. 读 git diff，逐 AC 对比
+3. 输出：
+   - 少做的：spec 要求但代码里没有的（AC 编号 + 证据）
+   - 多做的：代码里有但 spec 没要求的（文件+行号）
+   - 四态缺失：Loading/Empty/Error/Edge 有哪个没覆盖
+   - 结论：✅ 合规 / ⚠️ 有偏差（列出）
+```
+
+**审查 2 — 代码质量**（spec 合规 ✅ 后才做）：
+
+派 subagent，只给 git diff。让它判断：
+- 命名是否清晰？
+- 有没有明显的 bug 或边界遗漏？
+- 代码结构是否合理？
+
+两个审查都通过后，继续下一步。不通过→修→重查。
+
+#### 3c. 更新进度
+
+Edit roadmap.md，把该 Story 的 checkbox 从 `[ ]` 或 `[~]` 改为 `[x]`。
+
+开始下一个 Story 前，把它的 checkbox 从 `[ ]` 改为 `[~]`。
+
+### 4. 发现偏差时
+
+- **不影响 AC 的偏差**（字段名改了、文件拆了两个）→ 记 SIGNAL 在 corrections 文件，继续开发
+- **影响 AC 或 Story 范围的偏差** → 立即停手，触发 `/product-trace-correct`
+
+### 5. 全部 Story 完成后
+
+所有 Story `[x]` 后，运行 `pt session-stop`。回答三个必答题：
+1. 进度：所有 checkbox 更新了？
+2. spec 还准吗？（A=准 / B=L0 / C=L1 / D=L2 / E=L3）
+3. SIGNAL 需要升级为 CORR 吗？
 
 ## 做完之后
 
