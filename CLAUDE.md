@@ -35,7 +35,7 @@ Discover → Plan → Design → Build → Verify
 ## 命名规范
 
 - 所有文档文件名**全小写**：`roadmap.md`、`product-vision.md`、`architecture.md`、`ui-design-system.md`、`spec.md`、`acceptance.md`、`corrections.md`
-- 目录名：`docs/features/<feature-slug>/sprints/sprint-N/`
+- 目录名：`.product-trace/features/<feature-slug>/sprints/sprint-N/`
 - YAML frontmatter 中 `doc` 字段保持原始大写（如 `doc: ROADMAP`）作为标识符
 - SKILL 名：`product-trace-<verb>`（kebab-case）
 

@@ -19,7 +19,7 @@ description: "新需求门控。Sprint进行中有新需求进来时 MUST 使用
 
 **增量需求**——比如"列表加个搜索框"。不改变产品方向、不增加新用户类型、不影响架构。处理方式：判断归属（算哪个 Story 的延伸还是新 Story？）→ 正常排入 Backlog（P1/P2）或下个 Sprint。不要插入当前 Sprint。
 
-**新 Feature**——比如"加用户认证系统"。独立产品模块、涉及新用户类型、可能需要新架构。处理方式：在 `docs/features/` 下创建独立目录 → 告诉用户这个新 Feature 要独立走 `/product-trace-discover` → 在现有 ROADMAP 中加一段交叉引用指向新 Feature 的路线图。
+**新 Feature**——比如"加用户认证系统"。独立产品模块、涉及新用户类型、可能需要新架构。处理方式：在 `.product-trace/features/` 下创建独立目录 → 告诉用户这个新 Feature 要独立走 `/product-trace-discover` → 在现有 ROADMAP 中加一段交叉引用指向新 Feature 的路线图。
 
 **紧急需求**——比如"线上保存按钮坏了"。阻塞发布或影响正在使用的功能。处理方式：这是唯一允许插入当前 Sprint 的情况。在该 Sprint 的 spec.md 里加一条 Story，ROADMAP 里标记 `[!]` 并注明阻塞原因。**必须记录代价**——因为插入了它，原来的哪个 Story 要被延期到哪个 Sprint。
 
@@ -38,7 +38,7 @@ description: "新需求门控。Sprint进行中有新需求进来时 MUST 使用
 
 **2. 增量处理**：找到这个需求最接近的已有 Story → 正常优先级加入 Backlog → Edit 更新 ROADMAP。
 
-**3. 新 Feature 处理**：在 `docs/features/<new-slug>/` 建目录 → 告知用户下一步用 `/product-trace-discover` → Edit 主 ROADMAP 加 `## Feature Tracks` 段交叉引用。
+**3. 新 Feature 处理**：在 `.product-trace/features/<new-slug>/` 建目录 → 告知用户下一步用 `/product-trace-discover` → Edit 主 ROADMAP 加 `## Feature Tracks` 段交叉引用。
 
 **4. 紧急处理**：Edit spec.md 当前 Sprint 段加新 Story → Edit ROADMAP 加 `[!]` 附原因 → Edit ROADMAP 注明"因紧急需求 XXX 插入，原 Story-N 延期至 Sprint N+1"。这是唯一允许中途插入 Sprint 的情况——代价必须白纸黑字写下来。
 

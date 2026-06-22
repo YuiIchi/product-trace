@@ -29,7 +29,7 @@ export async function sessionStart(): Promise<void> {
     console.log('📋 Product Trace');
     console.log();
     console.log('未找到 roadmap.md');
-    console.log('运行 pt init 初始化项目，或 cd 到项目根目录');
+    console.log('运行 pt init 初始化项目，或确认项目已接入 Product Trace（文档位于 .product-trace/）');
     return;
   }
 

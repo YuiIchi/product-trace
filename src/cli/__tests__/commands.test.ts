@@ -43,20 +43,20 @@ describe('pt init', () => {
 
   it('creates docs/ directory structure', () => {
     ptInit();
-    expect(existsSync(join(TEST_DIR, 'docs/features/main/sprints'))).toBe(true);
-    expect(existsSync(join(TEST_DIR, 'docs/features/main/product-vision.md'))).toBe(true);
-    expect(existsSync(join(TEST_DIR, 'docs/features/main/roadmap.md'))).toBe(true);
+    expect(existsSync(join(TEST_DIR, '.product-trace/features/main/sprints'))).toBe(true);
+    expect(existsSync(join(TEST_DIR, '.product-trace/features/main/product-vision.md'))).toBe(true);
+    expect(existsSync(join(TEST_DIR, '.product-trace/features/main/roadmap.md'))).toBe(true);
   });
 
   it('writes valid product-vision.md', () => {
-    const content = readFileSync(join(TEST_DIR, 'docs/features/main/product-vision.md'), 'utf-8');
+    const content = readFileSync(join(TEST_DIR, '.product-trace/features/main/product-vision.md'), 'utf-8');
     expect(content).toContain('doc: product-vision');
     expect(content).toContain('status: draft');
     expect(content).toContain('## 3. MVP 范围');
   });
 
   it('writes valid roadmap.md with checkbox', () => {
-    const content = readFileSync(join(TEST_DIR, 'docs/features/main/roadmap.md'), 'utf-8');
+    const content = readFileSync(join(TEST_DIR, '.product-trace/features/main/roadmap.md'), 'utf-8');
     expect(content).toContain('doc: ROADMAP');
     expect(content).toContain('current-sprint: Sprint 1');
     expect(content).toContain('← current');
@@ -79,13 +79,13 @@ describe('pt new-sprint', () => {
 
   it('creates sprint-1 with spec and corrections', () => {
     ptNewSprint();
-    expect(existsSync(join(TEST_DIR, 'docs/features/main/sprints/sprint-1/spec.md'))).toBe(true);
-    expect(existsSync(join(TEST_DIR, 'docs/features/main/sprints/sprint-1/acceptance'))).toBe(true);
-    expect(existsSync(join(TEST_DIR, 'docs/features/main/sprints/sprint-1/corrections-sprint-1.md'))).toBe(true);
+    expect(existsSync(join(TEST_DIR, '.product-trace/features/main/sprints/sprint-1/spec.md'))).toBe(true);
+    expect(existsSync(join(TEST_DIR, '.product-trace/features/main/sprints/sprint-1/acceptance'))).toBe(true);
+    expect(existsSync(join(TEST_DIR, '.product-trace/features/main/sprints/sprint-1/corrections-sprint-1.md'))).toBe(true);
   });
 
   it('writes spec.md with all 7 required sections', () => {
-    const content = readFileSync(join(TEST_DIR, 'docs/features/main/sprints/sprint-1/spec.md'), 'utf-8');
+    const content = readFileSync(join(TEST_DIR, '.product-trace/features/main/sprints/sprint-1/spec.md'), 'utf-8');
     expect(content).toContain('doc: spec');
     expect(content).toContain('sprint: 1');
     expect(content).toContain('status: draft');
@@ -99,7 +99,7 @@ describe('pt new-sprint', () => {
   });
 
   it('writes corrections file with CORR and SIGNAL sections', () => {
-    const content = readFileSync(join(TEST_DIR, 'docs/features/main/sprints/sprint-1/corrections-sprint-1.md'), 'utf-8');
+    const content = readFileSync(join(TEST_DIR, '.product-trace/features/main/sprints/sprint-1/corrections-sprint-1.md'), 'utf-8');
     expect(content).toContain('纠偏日志');
     expect(content).toContain('## CORR 条目');
     expect(content).toContain('## SIGNAL 占位');
@@ -107,7 +107,7 @@ describe('pt new-sprint', () => {
 
   it('increments sprint number', () => {
     ptNewSprint();
-    expect(existsSync(join(TEST_DIR, 'docs/features/main/sprints/sprint-2/spec.md'))).toBe(true);
+    expect(existsSync(join(TEST_DIR, '.product-trace/features/main/sprints/sprint-2/spec.md'))).toBe(true);
   });
 });
 
@@ -126,7 +126,7 @@ describe('pt status', () => {
   });
 
   it('shows [x] for completed stories', () => {
-    const roadmapPath = join(TEST_DIR, 'docs/features/main/roadmap.md');
+    const roadmapPath = join(TEST_DIR, '.product-trace/features/main/roadmap.md');
     let content = readFileSync(roadmapPath, 'utf-8');
     content = content.replace('[ ] Story-001', '[x] Story-001');
     writeFileSync(roadmapPath, content);
@@ -150,7 +150,7 @@ describe('pt progress', () => {
   });
 
   it('shows 100% when all stories done', () => {
-    const roadmapPath = join(TEST_DIR, 'docs/features/main/roadmap.md');
+    const roadmapPath = join(TEST_DIR, '.product-trace/features/main/roadmap.md');
     let content = readFileSync(roadmapPath, 'utf-8');
     content = content.replace('[ ] Story-001', '[x] Story-001');
     writeFileSync(roadmapPath, content);
@@ -161,7 +161,7 @@ describe('pt progress', () => {
   });
 
   it('shows mixed story states', () => {
-    const roadmapPath = join(TEST_DIR, 'docs/features/main/roadmap.md');
+    const roadmapPath = join(TEST_DIR, '.product-trace/features/main/roadmap.md');
     let content = readFileSync(roadmapPath, 'utf-8');
     content = content.replace(
       '- [x] Story-001: <标题> — <简述>',
